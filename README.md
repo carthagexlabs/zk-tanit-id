@@ -4,7 +4,7 @@
   <img src="frontend/public/zktanitid_logo.png" width="400" />
 </p>
 
-**Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid NIC**, or **Student Status** — **without revealing raw personal data (PII)**.
+**Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid NIC**, or **Student Enrolment** — **without revealing raw personal data (PII)**.
 
 ### ✨ Why “ZKTanitID”
 We chose the name **ZKTanitID** after [Tanit](https://en.wikipedia.org/wiki/Tanit), the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **ZKTanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions ZKTanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
