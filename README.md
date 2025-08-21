@@ -1,4 +1,4 @@
-# TanitID- Privacy-Preserving Identity Attestations on Midnight
+# TanitID - Privacy-Preserving Identity Attestations
 
 <p align="center">
   <img src="assets/zktanitid-logo.png" width="400" />
@@ -13,11 +13,14 @@ We chose the name **TanitID** after **Tanit**, the Carthaginian goddess of prote
 
 ## Why Tunisia (problem background)
 Tunisia’s rapid digitization has outpaced its privacy safeguards. Civil society has warned that the government’s **Mobile ID (e‑Houwiya)** program launched with limited transparency and weak oversight, risking users’ data protection and trust ([Access Now — Mobile ID “black box”](https://www.accessnow.org/tunisia-must-open-mobile-id-black-box/)).
+
 Beyond Mobile ID, a trio of initiatives — **biometric ID**, **Mobile ID**, and a **subsidies compensation platform** — has been criticized for opacity and the potential to enable mass surveillance, identity theft, and data exploitation if deployed without robust safeguards ([Access Now — digitization risks](https://www.accessnow.org/tunisias-digitization-programs-threaten-the-privacy-of-millions/); [press: postpone subsidies platform](https://www.accessnow.org/press-release/tunisia-postpone-digital-platform-for-subsidies-compensation-launch/)).
+
 These risks are not theoretical: in **July 2025**, Tunisia’s **national university network** reportedly suffered a data leak affecting up to ~150,000 students ([SearchInform 2025 roundup](https://searchinform.com/blog/2025/7/16/data-breaches-in-saudi-arabia-and-tunisia/)).
+
 At the same time, private‑sector **KYC/AML** practices push for extensive data collection and long retention horizons, amplifying exposure ([VOVE ID — KYC in Tunisia, 2025](https://blog.voveid.com/kyc-compliance-in-tunisia-a-2025-guide-for-digital-businesses/)).
 
-**Our approach:** ZK attestations — **prove the fact**, don’t expose the data.
+**Our approach:** ZK TanitID attestations — **prove the fact**, don’t expose the data.
 
 ---
 
