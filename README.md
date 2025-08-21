@@ -1,7 +1,7 @@
 # TanitID- Privacy-Preserving Identity Attestations on Midnight
 
 <p align="center">
-  <img src="assets/zktanitid-logo.png" width="120" />
+  <img src="assets/zktanitid-logo.png" width="400" />
 </p>
 
 **Protect facts, not data.** TanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid CIN**, or **Student Status** — **without revealing raw personal data (PII)**.
