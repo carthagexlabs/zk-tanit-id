@@ -7,7 +7,7 @@
 **Protect facts, not data.** TanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid CIN**, or **Student Status** — **without revealing raw personal data (PII)**.
 
 ### ✨ Why “TanitID”
-We chose the name **TanitID** after **Tanit**, the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **TanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions TanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
+We chose the name **TanitID** after [Tanit](https://en.wikipedia.org/wiki/Tanit), the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **TanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions TanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
 
 ---
 
