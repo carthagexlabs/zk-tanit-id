@@ -1,13 +1,13 @@
-# TanitID on Midnight - Privacy-Preserving Identity Attestations
+# ZKTanitID on Midnight - Privacy-Preserving Identity Attestations
 
 <p align="center">
-  <img src="assets/zktanitid-logo.png" width="400" />
+  <img src="frontend/public/zktanitid_logo.png" width="400" />
 </p>
 
-**Protect facts, not data.** TanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid CIN**, or **Student Status** — **without revealing raw personal data (PII)**.
+**Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid NIC**, or **Student Status** — **without revealing raw personal data (PII)**.
 
-### ✨ Why “TanitID”
-We chose the name **TanitID** after [Tanit](https://en.wikipedia.org/wiki/Tanit), the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **TanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions TanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
+### ✨ Why “ZKTanitID”
+We chose the name **ZKTanitID** after [Tanit](https://en.wikipedia.org/wiki/Tanit), the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **ZKTanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions ZKTanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
 
 ---
 
@@ -26,7 +26,7 @@ At the same time, private‑sector **KYC/AML** practices push for extensive data
 
 ## Demo Features
 - ✅ **Age ≥ 18** verifier (no DOB disclosure)
-- ✅ **Valid CIN** verifier (no CIN number disclosure; supports revocation root)
+- ✅ **Valid NIC** verifier (no NIC number disclosure; supports revocation root)
 - ✅ **Current Student** verifier (term-bounded, identity‑preserving)
 - 🔒 **No raw PII on‑chain** — only commitments + ZK proofs
 - 🧾 **Open-source** (Apache‑2.0) and auditable (avoids “black box” concerns)
@@ -34,33 +34,48 @@ At the same time, private‑sector **KYC/AML** practices push for extensive data
 ---
 
 ## Architecture
-- **Contracts (Compact):** verifier contracts for age, CIN validity, and student status.
+- **Contracts (Compact):** verifier contracts for age, NIC (National Identity Card) validity, and student status.
 - **Frontend (MidnightJS):** request → generate proof locally → submit to contract.
 - **Data:** credentials are stored client‑side; blockchain sees only **commitments & proofs**.
 
 ```
 /contracts
   verifier_age.compact
-  verifier_cin.compact
+  verifier_nic.compact
   verifier_student.compact
 /frontend
+  public/
   src/
     App.tsx
     main.tsx
-    components/ProofForm.tsx
-    services/midnight.ts
+    components/
+    services/
   index.html
 /docs
   THREAT_MODEL.md
+  TUTORIAL.md
 LICENSE
+README.md
+```
+---
+
+## Quickstart
+
+### 1) Frontend
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ---
 
-TanitID leverages Midnight’s split-computation model:
+### How It Works
+
+ZKTanitID leverages Midnight’s split-computation model:
 
 - **Off-Chain (User Device):**  
-  Sensitive data (e.g., DOB, residency, education) is processed locally.  
+  Sensitive data (e.g., DOB, NIC, education) is processed locally.  
   Compact contracts run on the device, generating a ZK proof.  
 
 - **ZK Proofs Bridge:**  
@@ -71,17 +86,15 @@ TanitID leverages Midnight’s split-computation model:
 
 This ensures compliance with data protection while enabling verifiable identity checks.
 
-![TanitID Flowchart](./assets/tanitid_midnight_flowchart.png)
-
-### How It Works
+![ZKTanitID Flowchart](./frontend/public/zktanitid_midnight_flowchart.png)
 
 1. **User Inputs Data (Off-Chain)**  
-   The citizen enters sensitive details such as Date of Birth, residency, or education records into the TanitID app.  
+   The citizen enters sensitive details such as Date of Birth, NIC, or education records into the ZKTanitID app.  
    This information **never leaves their device**.
 
 2. **Compact Contract Execution**  
    A privacy-preserving smart contract, written in Compact, runs locally.  
-   It checks the required condition (e.g., "Is user over 18?" or "Does user have valid residency?").
+   It checks the required condition (e.g., "Is user over 18?" or "Does user have valid NIC?").
 
 3. **Zero-Knowledge Proof Generation**  
    Instead of sending raw data, the app generates a **ZK proof** that the condition holds true.  
@@ -95,4 +108,4 @@ This ensures compliance with data protection while enabling verifiable identity 
    Midnight’s VM verifies the proof and updates the smart contract state.  
    This enables trusted identity attestation without exposing sensitive information.
 
-✅ With this flow, TanitID ensures **compliance, privacy, and verifiability** in digital identity use cases.
+✅ With this flow, ZKTanitID ensures **compliance, privacy, and verifiability** in digital identity use cases.
