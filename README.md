@@ -1,9 +1,8 @@
-# ZK-Tanit-ID
-Zero-Knowledge Proof framework for privacy-preserving identity attestation, inspired by Tunisia’s digital sovereignty challenges.
-
-![TanitID logo](assets/zktanitid-logo.png)
-
 # TanitID- Privacy-Preserving Identity Attestations on Midnight
+
+<p align="center">
+  <img src="assets/zktanitid-logo.png" width="120" />
+</p>
 
 **Protect facts, not data.** TanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid CIN**, or **Student Status** — **without revealing raw personal data (PII)**.
 
