@@ -1,4 +1,4 @@
-# TanitID - Privacy-Preserving Identity Attestations
+# TanitID on Midnight - Privacy-Preserving Identity Attestations
 
 <p align="center">
   <img src="assets/zktanitid-logo.png" width="400" />
@@ -56,3 +56,43 @@ LICENSE
 ```
 
 ---
+
+TanitID leverages Midnight’s split-computation model:
+
+- **Off-Chain (User Device):**  
+  Sensitive data (e.g., DOB, residency, education) is processed locally.  
+  Compact contracts run on the device, generating a ZK proof.  
+
+- **ZK Proofs Bridge:**  
+  Only the proof is sent to the chain, ensuring no personal data is leaked.  
+
+- **On-Chain (Midnight VM):**  
+  The blockchain validates the proof without accessing the underlying private data.  
+
+This ensures compliance with data protection while enabling verifiable identity checks.
+
+![TanitID Flowchart](./assets/tanitid_midnight_flowchart.png)
+
+### How It Works
+
+1. **User Inputs Data (Off-Chain)**  
+   The citizen enters sensitive details such as Date of Birth, residency, or education records into the TanitID app.  
+   This information **never leaves their device**.
+
+2. **Compact Contract Execution**  
+   A privacy-preserving smart contract, written in Compact, runs locally.  
+   It checks the required condition (e.g., "Is user over 18?" or "Does user have valid residency?").
+
+3. **Zero-Knowledge Proof Generation**  
+   Instead of sending raw data, the app generates a **ZK proof** that the condition holds true.  
+   Example: *“I am over 18”* without revealing the actual date of birth.
+
+4. **Proof Submission to Midnight**  
+   The proof is sent to the Midnight blockchain.  
+   The chain cannot see the user’s private data—only the proof.
+
+5. **On-Chain Verification**  
+   Midnight’s VM verifies the proof and updates the smart contract state.  
+   This enables trusted identity attestation without exposing sensitive information.
+
+✅ With this flow, TanitID ensures **compliance, privacy, and verifiability** in digital identity use cases.
