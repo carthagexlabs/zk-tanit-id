@@ -1,0 +1,33 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/suites/bbs-2023/v1"
+  ],
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "verifiableCredential": [
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        "https://w3id.org/security/suites/bbs-2023/v1"
+      ],
+      "type": [
+        "VerifiableCredential",
+        "NationalIdentityCard"
+      ],
+      "issuer": "did:example:tunisia-nic-authority",
+      "expirationDate": "2030-08-25T12:00:00Z",
+      "credentialSubject": {
+        "id": "did:example:holder123"
+      },
+      "proof": {
+        "type": "BbsBlsSignatureProof2020",
+        "created": "2025-08-25T13:00:00Z",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:example:tunisia-nic-authority#keys-1",
+        "proofValue": "XYZ987654321..."
+      }
+    }
+  ]
+}

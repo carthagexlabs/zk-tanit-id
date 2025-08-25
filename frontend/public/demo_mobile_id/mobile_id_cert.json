@@ -1,0 +1,16 @@
+{
+  "type": "MobileIDCertificate",
+  "issuer": "TunTrust (Demo)",
+  "subject": {
+    "cn": "ALI BEN SALAH",
+    "serialNumber": "TUN12345678",
+    "phone": "+21650000000"
+  },
+  "validity": {
+    "notBefore": "2025-01-01T00:00:00Z",
+    "notAfter": "2027-01-01T00:00:00Z"
+  },
+  "policy": "1.2.840.113549.1.1.5 (DEMO)",
+  "signatureAlg": "SHA256withRSA (DEMO)",
+  "signature": "0xDEMO_MOBILEID_SIGNATURE"
+}

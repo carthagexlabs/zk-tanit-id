@@ -1,0 +1,30 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/suites/bbs-2023/v1"
+  ],
+  "id": "urn:uuid:123e4567-e89b-12d3-a456-426614174000",
+  "type": [
+    "VerifiableCredential",
+    "NationalIdentityCard"
+  ],
+  "issuer": "did:example:tunisia-nic-authority",
+  "issuanceDate": "2025-08-25T12:00:00Z",
+  "expirationDate": "2030-08-25T12:00:00Z",
+  "credentialSubject": {
+    "id": "did:example:holder123",
+    "nicNumber": "TUN12345678",
+    "name": "Ali Ben Salah",
+    "surname": "Ben Salah",
+    "motherName": "Fatma Trabelsi",
+    "dob": "1995-04-12",
+    "nationality": "TN"
+  },
+  "proof": {
+    "type": "BbsBlsSignature2020",
+    "created": "2025-08-25T12:00:00Z",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:example:tunisia-nic-authority#keys-1",
+    "proofValue": "ABCDEFG1234567890..."
+  }
+}

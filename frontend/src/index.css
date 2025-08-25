@@ -1,15 +1,5 @@
-/* src/index.css */
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  place-items: center;
-  justify-content: center;
-}
+/* minimal styles just to satisfy import */
+:root { color-scheme: light dark; }
+body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; }
+main { padding: 16px; }
+button { cursor: pointer; }
