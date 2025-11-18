@@ -149,7 +149,7 @@ export function ProofGenerationStep({ userData, onNext, onBack }: ProofGeneratio
                 </div>
                 <div>
                   <span className="text-slate-400">Verification Gas:</span>
-                  <span className="text-white ml-2 font-medium">~0.001 ETH</span>
+                  <span className="text-white ml-2 font-medium">~0.001 NIGHT</span>
                 </div>
               </div>
             </div>
