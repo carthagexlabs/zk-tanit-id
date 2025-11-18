@@ -1,62 +1,32 @@
 import React, { useState } from "react";
-import CredentialUploader from "./components/CredentialUploader";
-import CredentialDashboard from "./components/CredentialDashboard";
-import ProofOptions from "./components/ProofOptions";
-import VerifierDashboard from "./components/VerifierDashboard";
+import { Header } from "./components/Header";
+import { Hero } from "./components/Hero";
+import { VerificationFlow } from "./components/VerificationFlow";
+import { Footer } from "./components/Footer";
 
-function App() {
-  const [credential, setCredential] = useState<any | null>(null);
-
-  const loadDemoNIC = async () => {
-    try {
-      const res = await fetch("/demo_credentials/full_nic_vc.json");
-      const json = await res.json();
-      setCredential(json);
-      alert("✅ Demo NIC loaded successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load demo NIC credential.");
-    }
-  };
+export default function App() {
+  const [currentStep, setCurrentStep] = useState(0);
 
   return (
-    <main style={{ maxWidth: 980, margin: "40px auto", padding: "0 16px", fontFamily: "Inter, ui-sans-serif, system-ui" }}>
-      <h1>ZKTanitID DApp</h1>
-      <p>Prove NIC, Driver’s Licence, and Student Enrolment without exposing personal data.</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 animate-gradient-shift">
+      <div className="relative min-h-screen">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.05%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%221%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50 animate-float"></div>
 
-      <section style={{ marginTop: 16 }}>
-        <h2>1) Add Credential (one-time)</h2>
-        <CredentialUploader onUpload={setCredential} />
-        <button style={{ marginTop: 12 }} onClick={loadDemoNIC}>
-          Load Demo NIC Credential
-        </button>
-      </section>
+        <Header />
 
-      <section>
-        <CredentialDashboard
-          creds={[
-            { type: "NIC", issuer: "Tunisia NIC Authority", expiry: "2030-08-25" },
-            { type: "Driver", issuer: "Transport Ministry", expiry: "2028-09-01" },
-            { type: "Student", issuer: "Université de Tunis", expiry: "2026-07-01" }
-          ]}
-        />
-      </section>
+        <main className="relative z-10 overflow-hidden">
+          {currentStep === 0 && <Hero onStart={() => setCurrentStep(1)} />}
+          {currentStep > 0 && (
+            <VerificationFlow
+              currentStep={currentStep}
+              onStepChange={setCurrentStep}
+              onReset={() => setCurrentStep(0)}
+            />
+          )}
+        </main>
 
-      {credential && (
-        <section>
-          <h2>2) Generate Proofs</h2>
-          <ProofOptions kind="nic_valid" credential={credential} />
-          <ProofOptions kind="driver_valid" credential={credential} />
-          <ProofOptions kind="student_enrolled" credential={credential} />
-        </section>
-      )}
-
-      <footer style={{ marginTop: 32, opacity: 0.8 }}>
-        <small>Demo only — all data here is mock. No real PII is processed.</small>
-      </footer>
-      <VerifierDashboard />
-    </main>
+        <Footer />
+      </div>
+    </div>
   );
 }
-
-export default App;
