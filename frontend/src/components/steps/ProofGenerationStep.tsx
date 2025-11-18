@@ -148,7 +148,7 @@ export function ProofGenerationStep({ userData, onNext, onBack }: ProofGeneratio
                   <span className="text-white ml-2 font-medium">2.1 KB</span>
                 </div>
                 <div>
-                  <span className="text-slate-400">Verification Gas:</span>
+                  <span className="text-slate-400">Verification Fees:</span>
                   <span className="text-white ml-2 font-medium">~0.001 NIGHT</span>
                 </div>
               </div>
