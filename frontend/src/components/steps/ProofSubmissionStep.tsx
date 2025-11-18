@@ -78,8 +78,8 @@ export function ProofSubmissionStep({ onNext, onBack }: ProofSubmissionStepProps
                 <span className="text-white font-medium">Midnight Testnet</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Gas Fee:</span>
-                <span className="text-white font-medium">~0.001 ETH</span>
+                <span className="text-slate-400">Fee:</span>
+                <span className="text-white font-medium">~0.001 NIGHT</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-400">Proof Size:</span>
