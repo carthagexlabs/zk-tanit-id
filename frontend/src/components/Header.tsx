@@ -6,69 +6,7 @@ import {
   Check,
 } from "lucide-react";
 import logo from "../assets/logo-zktanit.png";
-
-// --- (Added) TypeScript Type Definitions ---
-// These interfaces are based on the @midnight-ntwrk/dapp-connector-api
-
-/**
- * The API object returned after a successful
- * wallet.enable() call.
- */
-interface WalletApi {
-  state: () => Promise<WalletState>;
-  serviceUriConfig: () => Promise<ServiceURIs>;
-  // ... other methods like balanceAndProveTransaction, submitTransaction
-}
-
-/**
- * The state object returned from walletApi.state()
- */
-interface WalletState {
-  shieldedAddress: string;
-  coinPublicKey: string;
-  encryptionPublicKey: string;
-  // ... other properties
-}
-
-/**
- * The service URIs. We don't use this in the header,
- * but you'll need it for other wallet interactions.
- */
-interface ServiceURIs {
-  indexerUri: string;
-  indexerWsUri: string;
-  proverServerUri: string;
-  // ... other properties
-}
-
-/**
- * The wallet provider object injected into the window
- */
-interface InjectedWallet {
-  enable: () => Promise<WalletApi>;
-  name: string;
-  icon: string;
-  apiVersion: string;
-}
-
-// --- (Added) Type-safe way to access the global window object ---
-declare global {
-  interface Window {
-    midnight?: {
-      mnLace?: InjectedWallet;
-      // You could add other wallets here
-      // otherWallet?: InjectedWallet;
-    };
-  }
-}
-
-// --- Helper function to find the wallet provider ---
-const getWalletProvider = (): InjectedWallet | null => {
-  if (window.midnight && window.midnight.mnLace) {
-    return window.midnight.mnLace;
-  }
-  return null;
-};
+import { useWallet } from "../hooks/useWallet";
 
 // --- Helper function to shorten the address ---
 const truncateAddress = (address: string): string => {
@@ -81,13 +19,8 @@ export function Header() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
 
-  // --- Wallet Connection State (Typed) ---
-  const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [userAddress, setUserAddress] = useState<string | null>(null);
-  
-  // You'll want to store this API object to use in other parts of your app
-  const [walletApi, setWalletApi] = useState<WalletApi | null>(null);
+  // Use wallet context instead of local state
+  const { isConnected, isConnecting, userAddress, connect } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,38 +37,6 @@ export function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
-
-  // --- Wallet Connection Handler (Typed) ---
-  const handleConnectWallet = async () => {
-    if (isConnecting || isConnected) return;
-
-    setIsConnecting(true);
-    const wallet: InjectedWallet | null = getWalletProvider();
-
-    if (!wallet) {
-      alert("Please install the Lace Beta Wallet for Midnight Network.");
-      setIsConnecting(false);
-      return;
-    }
-
-    try {
-      // 1. Request connection
-      const api: WalletApi = await wallet.enable();
-      setWalletApi(api); // Save the API object for later use
-
-      // 2. Get wallet state (like address)
-      const state: WalletState = await api.state();
-      setUserAddress(state.shieldedAddress);
-      setIsConnected(true);
-
-      console.log("Wallet connected!", state);
-    } catch (error) {
-      console.error("Wallet connection failed:", error);
-      alert("Wallet connection was rejected or failed.");
-    } finally {
-      setIsConnecting(false);
-    }
-  };
 
   return (
     <header
@@ -195,11 +96,11 @@ export function Header() {
                 TESTNET
               </span>
             </div>
-            
-            {/* --- MODIFIED: Connection Button --- */}
+
+            {/* Connection Button */}
             <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
               <button
-                onClick={handleConnectWallet}
+                onClick={connect}
                 disabled={isConnecting || isConnected}
                 className={`
                   group relative

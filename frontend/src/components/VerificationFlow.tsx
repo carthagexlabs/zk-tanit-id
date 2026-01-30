@@ -6,6 +6,7 @@ import { ProofGenerationStep } from "./steps/ProofGenerationStep";
 import { ProofSubmissionStep } from "./steps/ProofSubmissionStep";
 import { VerificationCompleteStep } from "./steps/VerificationCompleteStep";
 import { ArrowLeft } from "lucide-react";
+import { ProofData } from "../contexts/WalletContext";
 
 interface VerificationFlowProps {
   currentStep: number;
@@ -38,6 +39,9 @@ export function VerificationFlow({
     education: "",
     verificationClaim: "age_over_18",
   });
+
+  // Lifted proof state to pass between steps
+  const [proofData, setProofData] = useState<ProofData | null>(null);
 
   const handleNext = () => {
     if (currentStep < steps.length) {
@@ -97,10 +101,16 @@ export function VerificationFlow({
               userData={userData}
               onNext={handleNext}
               onBack={handleBack}
+              onProofGenerated={setProofData}
             />
           )}
           {currentStep === 4 && (
-            <ProofSubmissionStep onNext={handleNext} onBack={handleBack} />
+            <ProofSubmissionStep
+              onNext={handleNext}
+              onBack={handleBack}
+              proofData={proofData}
+              userData={userData}
+            />
           )}
           {currentStep === 5 && (
             <VerificationCompleteStep userData={userData} onReset={onReset} />
