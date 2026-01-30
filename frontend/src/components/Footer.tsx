@@ -1,5 +1,5 @@
-import React from "react";
-import { Shield, Github, Twitter, Book } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { FaGithub, FaXTwitter } from "react-icons/fa6";
 import logo from "../assets/logo-zktanit.png";
 
 export function Footer() {
@@ -29,22 +29,28 @@ export function Footer() {
             </p>
             <div className="flex items-center space-x-4">
               <a
-                href="#"
+                href="https://github.com/carthagexlabs/zk-tanit-id"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors duration-200"
               >
-                <Github className="h-5 w-5" />
+                <FaGithub className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://x.com/CarthageXLabs"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors duration-200"
               >
-                <Twitter className="h-5 w-5" />
+                <FaXTwitter className="h-5 w-5" />
               </a>
               <a
-                href="#"
+                href="https://carthagexlabs.medium.com/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors duration-200"
               >
-                <Book className="h-5 w-5" />
+                <BookOpen className="h-5 w-5" />
               </a>
             </div>
           </div>
