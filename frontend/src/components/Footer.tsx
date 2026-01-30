@@ -1,6 +1,6 @@
 import React from "react";
 import { Shield, Github, Twitter, Book } from "lucide-react";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-zktanit.png";
 
 export function Footer() {
   return (

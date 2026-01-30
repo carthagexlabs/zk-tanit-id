@@ -1,32 +1,141 @@
-import React, { useState, useEffect } from "react";
-import { Shield, Lock, Sparkle, BellElectric, ArrowRight } from "lucide-react";
-import logo from "../assets/logo.png";
+import { useState, useEffect } from "react";
+import {
+  Shield,
+  Lock,
+  ArrowRight,
+  Check,
+} from "lucide-react";
+import logo from "../assets/logo-zktanit.png";
+
+// --- (Added) TypeScript Type Definitions ---
+// These interfaces are based on the @midnight-ntwrk/dapp-connector-api
+
+/**
+ * The API object returned after a successful
+ * wallet.enable() call.
+ */
+interface WalletApi {
+  state: () => Promise<WalletState>;
+  serviceUriConfig: () => Promise<ServiceURIs>;
+  // ... other methods like balanceAndProveTransaction, submitTransaction
+}
+
+/**
+ * The state object returned from walletApi.state()
+ */
+interface WalletState {
+  shieldedAddress: string;
+  coinPublicKey: string;
+  encryptionPublicKey: string;
+  // ... other properties
+}
+
+/**
+ * The service URIs. We don't use this in the header,
+ * but you'll need it for other wallet interactions.
+ */
+interface ServiceURIs {
+  indexerUri: string;
+  indexerWsUri: string;
+  proverServerUri: string;
+  // ... other properties
+}
+
+/**
+ * The wallet provider object injected into the window
+ */
+interface InjectedWallet {
+  enable: () => Promise<WalletApi>;
+  name: string;
+  icon: string;
+  apiVersion: string;
+}
+
+// --- (Added) Type-safe way to access the global window object ---
+declare global {
+  interface Window {
+    midnight?: {
+      mnLace?: InjectedWallet;
+      // You could add other wallets here
+      // otherWallet?: InjectedWallet;
+    };
+  }
+}
+
+// --- Helper function to find the wallet provider ---
+const getWalletProvider = (): InjectedWallet | null => {
+  if (window.midnight && window.midnight.mnLace) {
+    return window.midnight.mnLace;
+  }
+  return null;
+};
+
+// --- Helper function to shorten the address ---
+const truncateAddress = (address: string): string => {
+  if (!address) return "";
+  return `${address.slice(0, 15)}...${address.slice(-4)}`;
+};
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+
+  // --- Wallet Connection State (Typed) ---
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [userAddress, setUserAddress] = useState<string | null>(null);
+  
+  // You'll want to store this API object to use in other parts of your app
+  const [walletApi, setWalletApi] = useState<WalletApi | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      // Header background change on scroll
       setIsScrolled(currentScrollY > 50);
-
-      // Hide/show header based on scroll direction
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
       }
-
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  // --- Wallet Connection Handler (Typed) ---
+  const handleConnectWallet = async () => {
+    if (isConnecting || isConnected) return;
+
+    setIsConnecting(true);
+    const wallet: InjectedWallet | null = getWalletProvider();
+
+    if (!wallet) {
+      alert("Please install the Lace Beta Wallet for Midnight Network.");
+      setIsConnecting(false);
+      return;
+    }
+
+    try {
+      // 1. Request connection
+      const api: WalletApi = await wallet.enable();
+      setWalletApi(api); // Save the API object for later use
+
+      // 2. Get wallet state (like address)
+      const state: WalletState = await api.state();
+      setUserAddress(state.shieldedAddress);
+      setIsConnected(true);
+
+      console.log("Wallet connected!", state);
+    } catch (error) {
+      console.error("Wallet connection failed:", error);
+      alert("Wallet connection was rejected or failed.");
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   return (
     <header
@@ -40,6 +149,7 @@ export function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 group">
+          {/* Logo and Title */}
           <div className="flex items-center space-x-3 transform transition-all duration-300 hover:scale-105">
             <div className="relative animate-pulse-slow">
               <img
@@ -58,6 +168,7 @@ export function Header() {
             </div>
           </div>
 
+          {/* Status Indicators & Connect Button */}
           <div className="flex items-center space-x-6">
             <div className="hidden md:flex items-center space-x-2 transform transition-all duration-300 hover:scale-105">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
@@ -84,27 +195,47 @@ export function Header() {
                 TESTNET
               </span>
             </div>
+            
+            {/* --- MODIFIED: Connection Button --- */}
             <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
               <button
-                className="
-      group relative
-      bg-gradient-to-r from-purple-600 to-blue-600
-      text-white font-semibold
-      px-5 py-2.5
-      rounded-lg
-      text-sm
-      transition-all duration-500
-      hover:from-purple-500 hover:to-blue-500
-      hover:scale-105
-      shadow-md shadow-purple-500/20
-      hover:shadow-lg hover:shadow-purple-500/30
-      overflow-hidden will-change-transform
-    "
+                onClick={handleConnectWallet}
+                disabled={isConnecting || isConnected}
+                className={`
+                  group relative
+                  text-white font-semibold
+                  px-5 py-2.5
+                  rounded-lg
+                  text-sm
+                  transition-all duration-500
+                  hover:scale-105
+                  shadow-md shadow-purple-500/20
+                  overflow-hidden will-change-transform
+                  ${
+                    isConnected
+                      ? "bg-gradient-to-r from-green-600 to-blue-600 cursor-default"
+                      : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 hover:shadow-lg hover:shadow-purple-500/30"
+                  }
+                  ${isConnecting ? "animate-pulse cursor-wait" : ""}
+                `}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <span className="flex items-center relative z-10">
-                  Connect Wallet{" "}
-                  <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300 will-change-transform" />
+                {!isConnected && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                )}
+                <span className="flex items-center justify-center relative z-10">
+                  {isConnecting ? (
+                    "Connecting..."
+                  ) : isConnected ? (
+                    <>
+                      <Check className="mr-2 h-4 w-4" />
+                      {truncateAddress(userAddress!)}
+                    </>
+                  ) : (
+                    <>
+                      Connect Wallet{" "}
+                      <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300 will-change-transform" />
+                    </>
+                  )}
                 </span>
               </button>
             </div>
