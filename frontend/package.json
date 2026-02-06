@@ -11,9 +11,15 @@
     "clean": "rm -rf dist node_modules package-lock.json .eslintcache *.tsbuildinfo"
   },
   "dependencies": {
-    "@midnight-ntwrk/compact-runtime": "^0.14.0",
-    "@midnight-ntwrk/dapp-connector-api": "^4.0.0",
-    "@midnight-ntwrk/midnight-js-types": "^3.0.0",
+    "@midnight-ntwrk/compact-runtime": "0.14.0",
+    "@midnight-ntwrk/ledger": "^4.0.0",
+    "@midnight-ntwrk/midnight-js-contracts": "3.0.0",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "3.0.0",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "3.0.0",
+    "@midnight-ntwrk/midnight-js-level-private-state-provider": "3.0.0",
+    "@midnight-ntwrk/midnight-js-network-id": "3.0.0",
+    "@midnight-ntwrk/midnight-js-node-zk-config-provider": "3.0.0",
+    "@midnight-ntwrk/midnight-js-types": "3.0.0",
     "@tailwindcss/postcss": "^4.1.18",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
