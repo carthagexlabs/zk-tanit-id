@@ -1,12 +1,13 @@
 import React from "react";
-import { ArrowRight, Shield, Eye, Zap, Lock, Wallet } from "lucide-react";
+import { ArrowRight, Shield, Eye, Zap, Lock, Wallet, FileCheck } from "lucide-react";
 import { useWallet } from "../hooks/useWallet";
 
 interface HeroProps {
   onStart: () => void;
+  onStartOpenID?: () => void;
 }
 
-export function Hero({ onStart }: HeroProps) {
+export function Hero({ onStart, onStartOpenID }: HeroProps) {
   const { isConnected, connect } = useWallet();
   return (
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 pt-32 overflow-hidden">
@@ -115,7 +116,26 @@ export function Hero({ onStart }: HeroProps) {
             )}
           </div>
 
-          <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.8s_forwards]">
+          {onStartOpenID && (
+            <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.8s_forwards]">
+              <button
+                onClick={onStartOpenID}
+                className="group relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all duration-500 hover:from-blue-500 hover:to-cyan-500 hover:scale-110 hover:shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/50 overflow-hidden will-change-transform"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                <span className="flex items-center relative z-10">
+                  <FileCheck className="mr-2 h-5 w-5" />
+                  Present EU PID Credential
+                  <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-2 transition-transform duration-300 will-change-transform" />
+                </span>
+              </button>
+              <p className="text-sm text-blue-400/60 mt-2">
+                OpenID4VP • SD-JWT-VC • eIDAS 2.0 compliant
+              </p>
+            </div>
+          )}
+
+          <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_2.0s_forwards]">
             <p className="text-sm text-slate-500 transition-colors duration-300 hover:text-slate-400">
               No registration required • Fully decentralized • Privacy
               guaranteed

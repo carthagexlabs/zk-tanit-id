@@ -1,0 +1,50 @@
+{
+  "_comment": "Decoded reference of a demo EU PID SD-JWT-VC credential (eu.europa.ec.eudi.pid.1). The actual credential is issued at runtime as a compact SD-JWT string.",
+  "header": {
+    "alg": "ES256",
+    "typ": "vc+sd-jwt"
+  },
+  "payload": {
+    "vct": "eu.europa.ec.eudi.pid.1",
+    "iss": "https://demo.zktanit.id/issuer",
+    "iat": 1737936000,
+    "nbf": 1737936000,
+    "exp": 1769472000,
+    "family_name": "Ben Salah",
+    "given_name": "Ali",
+    "birth_date": "1990-03-15",
+    "age_over_18": true,
+    "issuance_date": "2025-01-15",
+    "expiry_date": "2030-01-15",
+    "issuing_authority": "Ministry of Interior - Tunisia",
+    "issuing_country": "TN",
+    "nationality": "Tunisian",
+    "document_number": "TN-12345678",
+    "gender": "male",
+    "age_in_years": 35,
+    "age_birth_year": 1990,
+    "resident_city": "Tunis",
+    "resident_country": "TN",
+    "birth_city": "Tunis",
+    "birth_country": "TN"
+  },
+  "selectively_disclosable_claims": [
+    "family_name",
+    "given_name",
+    "birth_date",
+    "age_over_18",
+    "issuance_date",
+    "expiry_date",
+    "issuing_authority",
+    "issuing_country",
+    "nationality",
+    "document_number",
+    "gender",
+    "age_in_years",
+    "age_birth_year",
+    "resident_city",
+    "resident_country",
+    "birth_city",
+    "birth_country"
+  ]
+}

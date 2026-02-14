@@ -2,10 +2,28 @@ import React, { useState } from "react";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { VerificationFlow } from "./components/VerificationFlow";
+import { PresentationRequestFlow } from "./components/openid/PresentationRequestFlow";
 import { Footer } from "./components/Footer";
 
+type AppView = 'hero' | 'zk-verification' | 'openid-present';
+
 export default function App() {
+  const [appView, setAppView] = useState<AppView>('hero');
   const [currentStep, setCurrentStep] = useState(0);
+
+  const handleStartZk = () => {
+    setCurrentStep(1);
+    setAppView('zk-verification');
+  };
+
+  const handleStartOpenID = () => {
+    setAppView('openid-present');
+  };
+
+  const handleBackToHero = () => {
+    setAppView('hero');
+    setCurrentStep(0);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 animate-gradient-shift">
@@ -15,13 +33,18 @@ export default function App() {
         <Header />
 
         <main className="relative z-10 overflow-hidden">
-          {currentStep === 0 && <Hero onStart={() => setCurrentStep(1)} />}
-          {currentStep > 0 && (
+          {appView === 'hero' && (
+            <Hero onStart={handleStartZk} onStartOpenID={handleStartOpenID} />
+          )}
+          {appView === 'zk-verification' && (
             <VerificationFlow
               currentStep={currentStep}
               onStepChange={setCurrentStep}
-              onReset={() => setCurrentStep(0)}
+              onReset={handleBackToHero}
             />
+          )}
+          {appView === 'openid-present' && (
+            <PresentationRequestFlow onBack={handleBackToHero} />
           )}
         </main>
 
