@@ -7,7 +7,7 @@
 import { SDJwtVcInstance } from '@sd-jwt/sd-jwt-vc';
 import type { DisclosureFrame, PresentationFrame } from '@sd-jwt/types';
 import { base64urlEncode } from '@sd-jwt/utils';
-import { PID_VCT, type PidCredentialClaims } from '../../types/eupid';
+import { PID_VCT, CIN_VCT, type PidCredentialClaims, type CinCredentialClaims } from '../../types/eupid';
 
 // ── Key types ──────────────────────────────────────────────────────────────
 
@@ -155,6 +155,42 @@ export async function issueDemoPidCredential(
       (disclosureFrame._sd as string[]).push(field);
     }
   }
+
+  const credential = await instance.issue(payload, disclosureFrame);
+  return credential;
+}
+
+/**
+ * Issue a demo CIN SD-JWT-VC with all CIN claims selectively disclosable.
+ */
+export async function issueDemoCinCredential(
+  claims: CinCredentialClaims,
+): Promise<string> {
+  const instance = await createSdJwtVcInstance();
+
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    vct: CIN_VCT,
+    iss: 'https://demo.zktanit.id/issuer',
+    iat: now,
+    nbf: now,
+    exp: now + 10 * 365 * 24 * 60 * 60, // 10 years (CIN validity)
+    ...claims,
+  };
+
+  // All CIN claim fields are selectively disclosable
+  const cinFields: (keyof CinCredentialClaims)[] = [
+    'cin_number', 'nom', 'prenom', 'nom_ar', 'prenom_ar',
+    'date_naissance', 'lieu_naissance', 'gouvernorat_naissance',
+    'sexe', 'nationalite', 'etat_civil',
+    'nom_pere', 'nom_mere',
+    'adresse', 'gouvernorat', 'code_postal',
+    'date_delivrance', 'date_expiration', 'autorite_delivrance',
+  ];
+
+  const disclosureFrame: DisclosureFrame<typeof payload> = {
+    _sd: cinFields as unknown as string[],
+  } as DisclosureFrame<typeof payload>;
 
   const credential = await instance.issue(payload, disclosureFrame);
   return credential;

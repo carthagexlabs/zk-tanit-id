@@ -11,7 +11,7 @@ import type {
   StoredCredential,
   InputDescriptor,
 } from '../../types/eupid';
-import { PID_VCT } from '../../types/eupid';
+import { PID_VCT, CIN_VCT } from '../../types/eupid';
 
 // ── Parse Authorization Request ────────────────────────────────────────────
 
@@ -212,6 +212,46 @@ export function createDemoAuthorizationRequestUri(): string {
   const params = new URLSearchParams({
     response_type: 'vp_token',
     client_id: 'https://demo-bank.example.com',
+    nonce: crypto.randomUUID(),
+    state: `session-${Date.now()}`,
+    response_mode: 'direct_post',
+    presentation_definition: JSON.stringify(pd),
+  });
+
+  return `openid4vp://?${params.toString()}`;
+}
+
+/**
+ * Create a demo OID4VP authorization request URI simulating a Tunisian
+ * administrative office requesting CIN identity attributes.
+ */
+export function createDemoCinAuthorizationRequestUri(): string {
+  const pd = {
+    id: 'demo-admin-cin-1',
+    name: 'Administration CIN Verification',
+    purpose: 'Vérification d\'identité pour démarche administrative',
+    input_descriptors: [
+      {
+        id: 'tn-cin-basic',
+        name: 'Carte d\'Identité Nationale',
+        purpose: 'Vérification des données personnelles',
+        format: { 'vc+sd-jwt': { 'sd-jwt_alg_values': ['ES256'] } },
+        constraints: {
+          fields: [
+            { path: ['$.vct'], filter: { type: 'string', const: CIN_VCT } },
+            { path: ['$.cin_number'] },
+            { path: ['$.nom'] },
+            { path: ['$.prenom'] },
+            { path: ['$.date_naissance'] },
+          ],
+        },
+      },
+    ],
+  };
+
+  const params = new URLSearchParams({
+    response_type: 'vp_token',
+    client_id: 'https://demo-admin.gov.tn',
     nonce: crypto.randomUUID(),
     state: `session-${Date.now()}`,
     response_mode: 'direct_post',

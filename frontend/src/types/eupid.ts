@@ -4,8 +4,9 @@
  * SD-JWT-VC credential format types
  */
 
-// ── Verifiable Credential Type identifier (SD-JWT-VC `vct` claim) ──────────
+// ── Verifiable Credential Type identifiers (SD-JWT-VC `vct` claim) ─────────
 export const PID_VCT = 'eu.europa.ec.eudi.pid.1' as const;
+export const CIN_VCT = 'tn.gov.moi.cin.1' as const;
 
 // ── PID Credential Claims (eu.europa.ec.eudi.pid.1 namespace) ──────────────
 
@@ -51,13 +52,41 @@ export interface PidOptionalClaims {
 /** Full PID credential claims */
 export type PidCredentialClaims = PidMandatoryClaims & PidOptionalClaims;
 
+// ── CIN (Carte d'Identité Nationale) Credential Claims ─────────────────────
+
+/** Tunisian CIN attributes */
+export interface CinCredentialClaims {
+  cin_number: string;
+  nom: string;
+  prenom: string;
+  nom_ar: string;
+  prenom_ar: string;
+  date_naissance: string; // ISO 8601 (YYYY-MM-DD)
+  lieu_naissance: string;
+  gouvernorat_naissance: string;
+  sexe: 'masculin' | 'féminin';
+  nationalite: string;
+  etat_civil: 'célibataire' | 'marié(e)' | 'divorcé(e)' | 'veuf(ve)';
+  nom_pere: string;
+  nom_mere: string;
+  adresse: string;
+  gouvernorat: string;
+  code_postal: string;
+  date_delivrance: string; // ISO 8601
+  date_expiration: string; // ISO 8601
+  autorite_delivrance: string;
+}
+
+/** Union of all supported credential claim types */
+export type CredentialClaims = PidCredentialClaims | CinCredentialClaims;
+
 // ── SD-JWT-VC Stored Credential ────────────────────────────────────────────
 
 export interface StoredCredential {
   id: string;
   raw: string; // compact SD-JWT string (header.payload.signature~disclosure1~...~)
   vct: string;
-  claims: PidCredentialClaims;
+  claims: CredentialClaims;
   issuedAt: string;
   expiresAt: string;
   issuer: string;

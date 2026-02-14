@@ -1,5 +1,6 @@
 export {
   issueDemoPidCredential,
+  issueDemoCinCredential,
   createPresentation,
   verifyPresentation,
   decodeCredential,
@@ -14,9 +15,16 @@ export {
 } from './pid-credential';
 
 export {
+  createDemoCinClaims,
+  validateCinClaims,
+  CIN_FIELD_LABELS,
+} from './cin-credential';
+
+export {
   parseAuthorizationRequest,
   buildAuthorizationResponse,
   matchCredentials,
   extractRequestedFields,
   createDemoAuthorizationRequestUri,
+  createDemoCinAuthorizationRequestUri,
 } from './oid4vp';

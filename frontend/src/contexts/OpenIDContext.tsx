@@ -4,15 +4,19 @@ import type {
   OID4VPAuthorizationRequest,
   OID4VPAuthorizationResponse,
   PresentationConsent,
-  PidCredentialClaims,
+  CredentialClaims,
+  CinCredentialClaims,
 } from '../types/eupid';
-import { PID_VCT } from '../types/eupid';
+import { PID_VCT, CIN_VCT } from '../types/eupid';
 import {
   issueDemoPidCredential,
+  issueDemoCinCredential,
   createPresentation,
   decodeCredential,
   createDemoPidClaims,
+  createDemoCinClaims,
   PID_FIELD_LABELS,
+  CIN_FIELD_LABELS,
   parseAuthorizationRequest,
   matchCredentials,
   extractRequestedFields,
@@ -30,8 +34,9 @@ export interface OpenIDContextType {
   matchedCredential: StoredCredential | null;
 
   // Actions
-  addCredential: (raw: string, claims: PidCredentialClaims) => void;
+  addCredential: (raw: string, claims: CredentialClaims) => void;
   loadDemoPidCredential: () => Promise<void>;
+  loadDemoCinCredential: () => Promise<void>;
   handleAuthorizationRequest: (uri: string) => void;
   updateSelectedFields: (path: string, selected: boolean) => void;
   submitPresentation: () => Promise<void>;
@@ -56,15 +61,28 @@ export function OpenIDProvider({ children }: OpenIDProviderProps) {
 
   const clearError = useCallback(() => setError(null), []);
 
-  const addCredential = useCallback((raw: string, claims: PidCredentialClaims) => {
+  const addCredential = useCallback((raw: string, claims: CredentialClaims) => {
     const decoded = decodeCredential(raw);
+    const vct = (decoded.payload.vct as string) || PID_VCT;
+
+    // Derive issuedAt/expiresAt from the appropriate claim fields
+    let issuedAt: string;
+    let expiresAt: string;
+    if ('issuance_date' in claims) {
+      issuedAt = claims.issuance_date;
+      expiresAt = claims.expiry_date;
+    } else {
+      issuedAt = (claims as CinCredentialClaims).date_delivrance;
+      expiresAt = (claims as CinCredentialClaims).date_expiration;
+    }
+
     const stored: StoredCredential = {
       id: crypto.randomUUID(),
       raw,
-      vct: (decoded.payload.vct as string) || PID_VCT,
+      vct,
       claims,
-      issuedAt: claims.issuance_date,
-      expiresAt: claims.expiry_date,
+      issuedAt,
+      expiresAt,
       issuer: (decoded.payload.iss as string) || 'unknown',
     };
     setCredentials((prev) => [...prev, stored]);
@@ -79,6 +97,20 @@ export function OpenIDProvider({ children }: OpenIDProviderProps) {
       addCredential(raw, claims);
     } catch (err) {
       setError(`Failed to issue demo credential: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [addCredential]);
+
+  const loadDemoCinCredential = useCallback(async () => {
+    setIsProcessing(true);
+    setError(null);
+    try {
+      const claims = createDemoCinClaims();
+      const raw = await issueDemoCinCredential(claims);
+      addCredential(raw, claims);
+    } catch (err) {
+      setError(`Failed to issue demo CIN credential: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsProcessing(false);
     }
@@ -104,12 +136,17 @@ export function OpenIDProvider({ children }: OpenIDProviderProps) {
 
         // Build consent from requested fields
         const requestedFields = extractRequestedFields(request);
+        // Resolve field labels based on matched credential type
+        const fieldLabels = matched[0].vct === CIN_VCT
+          ? { ...PID_FIELD_LABELS, ...CIN_FIELD_LABELS }
+          : PID_FIELD_LABELS;
+
         const consentData: PresentationConsent = {
           verifierName: request.client_id,
           verifierPurpose: request.presentation_definition.purpose,
           requestedFields: requestedFields.map((f) => ({
             path: f.path,
-            label: PID_FIELD_LABELS[f.path] || f.path,
+            label: fieldLabels[f.path] || f.path,
             required: f.required,
             selected: true, // default all selected
           })),
@@ -183,6 +220,7 @@ export function OpenIDProvider({ children }: OpenIDProviderProps) {
     matchedCredential,
     addCredential,
     loadDemoPidCredential,
+    loadDemoCinCredential,
     handleAuthorizationRequest,
     updateSelectedFields,
     submitPresentation,

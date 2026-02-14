@@ -1,0 +1,37 @@
+{
+  "_comment": "Decoded reference for the demo Tunisian CIN SD-JWT-VC credential",
+  "header": {
+    "alg": "ES256",
+    "typ": "vc+sd-jwt"
+  },
+  "payload": {
+    "vct": "tn.gov.moi.cin.1",
+    "iss": "https://demo.zktanit.id/issuer",
+    "iat": 1737000000,
+    "nbf": 1737000000,
+    "exp": 2052360000,
+    "_sd_alg": "sha-256",
+    "_sd": ["...hashes..."]
+  },
+  "disclosures": {
+    "cin_number": "09876543",
+    "nom": "Ben Salah",
+    "prenom": "Ali",
+    "nom_ar": "\u0628\u0646 \u0635\u0627\u0644\u062d",
+    "prenom_ar": "\u0639\u0644\u064a",
+    "date_naissance": "1990-03-15",
+    "lieu_naissance": "Tunis",
+    "gouvernorat_naissance": "Tunis",
+    "sexe": "masculin",
+    "nationalite": "Tunisienne",
+    "etat_civil": "c\u00e9libataire",
+    "nom_pere": "Mohamed Ben Salah",
+    "nom_mere": "Fatma Trabelsi",
+    "adresse": "12 Rue de la Libert\u00e9",
+    "gouvernorat": "Tunis",
+    "code_postal": "1000",
+    "date_delivrance": "2025-01-15",
+    "date_expiration": "2035-01-15",
+    "autorite_delivrance": "Minist\u00e8re de l'Int\u00e9rieur"
+  }
+}

@@ -1,12 +1,14 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import {
   issueDemoPidCredential,
+  issueDemoCinCredential,
   createPresentation,
   verifyPresentation,
   decodeCredential,
   getDemoKeyPair,
 } from '../sd-jwt';
 import { createDemoPidClaims } from '../pid-credential';
+import { createDemoCinClaims } from '../cin-credential';
 
 describe('SD-JWT-VC operations', () => {
   let credential: string;
@@ -56,6 +58,38 @@ describe('SD-JWT-VC operations', () => {
       expect(decoded.payload.family_name).toBe('Ben Salah');
       expect(decoded.payload.given_name).toBe('Ali');
       expect(decoded.payload.age_over_18).toBe(true);
+    });
+  });
+
+  describe('issueDemoCinCredential', () => {
+    let cinCredential: string;
+
+    it('should issue a valid CIN SD-JWT-VC string', async () => {
+      const claims = createDemoCinClaims();
+      cinCredential = await issueDemoCinCredential(claims);
+
+      expect(cinCredential).toBeDefined();
+      expect(typeof cinCredential).toBe('string');
+      expect(cinCredential).toContain('~');
+      const parts = cinCredential.split('~');
+      expect(parts.length).toBeGreaterThan(1);
+    });
+
+    it('should embed the CIN VCT in the JWT payload', async () => {
+      const decoded = decodeCredential(cinCredential);
+      expect(decoded.payload.vct).toBe('tn.gov.moi.cin.1');
+    });
+
+    it('should have disclosures for all 19 CIN claims', async () => {
+      const decoded = decodeCredential(cinCredential);
+      expect(decoded.disclosureCount).toBe(19);
+    });
+
+    it('should decode CIN claims correctly', async () => {
+      const decoded = decodeCredential(cinCredential);
+      expect(decoded.payload.nom).toBe('Ben Salah');
+      expect(decoded.payload.prenom).toBe('Ali');
+      expect(decoded.payload.cin_number).toBe('09876543');
     });
   });
 

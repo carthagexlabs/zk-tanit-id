@@ -116,7 +116,7 @@ export function Hero({ onStart, onStartOpenID }: HeroProps) {
             )}
           </div>
 
-          {onStartOpenID && (
+          {onStartOpenID && isConnected && (
             <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.8s_forwards]">
               <button
                 onClick={onStartOpenID}

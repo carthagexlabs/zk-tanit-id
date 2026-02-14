@@ -5,6 +5,7 @@ import {
   extractRequestedFields,
   buildAuthorizationResponse,
   createDemoAuthorizationRequestUri,
+  createDemoCinAuthorizationRequestUri,
 } from '../oid4vp';
 import type { StoredCredential, OID4VPAuthorizationRequest } from '../../../types/eupid';
 import { PID_VCT } from '../../../types/eupid';
@@ -283,6 +284,28 @@ describe('OID4VP protocol', () => {
       const request = parseAuthorizationRequest(uri);
       expect(request.client_id).toBe('https://demo-bank.example.com');
       expect(request.presentation_definition.input_descriptors).toHaveLength(1);
+    });
+  });
+
+  describe('createDemoCinAuthorizationRequestUri', () => {
+    it('should create a parseable CIN demo URI', () => {
+      const uri = createDemoCinAuthorizationRequestUri();
+      expect(uri.startsWith('openid4vp://')).toBe(true);
+
+      const request = parseAuthorizationRequest(uri);
+      expect(request.client_id).toBe('https://demo-admin.gov.tn');
+      expect(request.presentation_definition.input_descriptors).toHaveLength(1);
+    });
+
+    it('should request CIN-specific fields', () => {
+      const uri = createDemoCinAuthorizationRequestUri();
+      const request = parseAuthorizationRequest(uri);
+      const fields = extractRequestedFields(request);
+      const fieldPaths = fields.map((f) => f.path);
+      expect(fieldPaths).toContain('cin_number');
+      expect(fieldPaths).toContain('nom');
+      expect(fieldPaths).toContain('prenom');
+      expect(fieldPaths).toContain('date_naissance');
     });
   });
 });

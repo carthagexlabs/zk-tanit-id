@@ -1,26 +1,44 @@
 import { CreditCard, Shield, Clock, User } from 'lucide-react';
-import type { StoredCredential } from '../../types/eupid';
+import type { StoredCredential, PidCredentialClaims, CinCredentialClaims } from '../../types/eupid';
+import { CIN_VCT } from '../../types/eupid';
 
 interface CredentialCardProps {
   credential: StoredCredential;
 }
 
+function isCinCredential(claims: StoredCredential['claims']): claims is CinCredentialClaims {
+  return 'cin_number' in claims;
+}
+
 export function CredentialCard({ credential }: CredentialCardProps) {
   const { claims, vct, issuer, expiresAt } = credential;
   const isExpired = new Date(expiresAt) < new Date();
+  const isCin = vct === CIN_VCT;
 
   const disclosableFields = Object.keys(claims).length;
 
+  // Resolve holder name from either credential type
+  const holderName = isCinCredential(claims)
+    ? `${claims.prenom} ${claims.nom}`
+    : `${(claims as PidCredentialClaims).given_name} ${(claims as PidCredentialClaims).family_name}`;
+
+  // Resolve country/origin
+  const origin = isCinCredential(claims)
+    ? claims.nationalite
+    : (claims as PidCredentialClaims).issuing_country;
+
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transition-all duration-300 hover:bg-white/15 hover:border-purple-500/30">
+    <div className={`bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 transition-all duration-300 hover:bg-white/15 ${isCin ? 'hover:border-emerald-500/30' : 'hover:border-purple-500/30'}`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center">
-            <CreditCard className="h-5 w-5 text-purple-400" />
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isCin ? 'bg-emerald-600/20' : 'bg-purple-600/20'}`}>
+            <CreditCard className={`h-5 w-5 ${isCin ? 'text-emerald-400' : 'text-purple-400'}`} />
           </div>
           <div>
-            <h3 className="text-white font-semibold text-sm">EU Person ID</h3>
+            <h3 className="text-white font-semibold text-sm">
+              {isCin ? 'Tunisian CIN' : 'EU Person ID'}
+            </h3>
             <p className="text-slate-400 text-xs font-mono">{vct}</p>
           </div>
         </div>
@@ -39,9 +57,7 @@ export function CredentialCard({ credential }: CredentialCardProps) {
       <div className="space-y-3 mb-4">
         <div className="flex items-center space-x-2">
           <User className="h-4 w-4 text-slate-400" />
-          <span className="text-white text-sm">
-            {claims.given_name} {claims.family_name}
-          </span>
+          <span className="text-white text-sm">{holderName}</span>
         </div>
         <div className="flex items-center space-x-2">
           <Shield className="h-4 w-4 text-slate-400" />
@@ -61,7 +77,7 @@ export function CredentialCard({ credential }: CredentialCardProps) {
           {disclosableFields} disclosable fields
         </span>
         <span className="text-slate-400 text-xs">
-          {claims.issuing_country}
+          {origin}
         </span>
       </div>
     </div>
