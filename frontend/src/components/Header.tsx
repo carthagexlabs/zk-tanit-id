@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Shield,
-  Lock,
-  ArrowRight,
-  Check,
-} from "lucide-react";
+import { Shield, Lock, ArrowRight, Check } from "lucide-react";
 import logo from "../assets/logo-zktanit.png";
 import { useWallet } from "../hooks/useWallet";
 
@@ -98,7 +93,7 @@ export function Header() {
             </div>
 
             {/* Connection Button */}
-            <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
+            <div className="transform  opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
               <button
                 onClick={connect}
                 disabled={isConnecting || isConnected}
