@@ -1,4 +1,4 @@
-# ZKTanitID on Midnight - Privacy-Preserving Identity Attestations
+# ZKTanitID - Privacy-Preserving Identity Attestations - This project is built on the Midnight Network
 
 <p align="center">
   <img src="frontend/public/zktanitid_logo.png" width="400" />
