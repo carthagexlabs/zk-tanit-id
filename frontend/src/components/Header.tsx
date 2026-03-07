@@ -1,18 +1,9 @@
 import { useState, useEffect } from "react";
-import {
-  Shield,
-  Lock,
-  ArrowRight,
-  Check,
-} from "lucide-react";
+import { Shield, Lock } from "lucide-react";
 import logo from "../assets/logo-zktanit.png";
 import { useWallet } from "../hooks/useWallet";
-
-// --- Helper function to shorten the address ---
-const truncateAddress = (address: string): string => {
-  if (!address) return "";
-  return `${address.slice(0, 15)}...${address.slice(-4)}`;
-};
+import { useUser } from "../hooks/useUser";
+import { AuthLayout } from "./AuthLayout";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -20,7 +11,9 @@ export function Header() {
   const [lastScrollY, setLastScrollY] = useState<number>(0);
 
   // Use wallet context instead of local state
-  const { isConnected, isConnecting, userAddress, connect } = useWallet();
+  const { isConnected, isConnecting, userAddress, connect, disconnect } =
+    useWallet();
+  const { isSignedIn, userEmail, signIn, signOut } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -97,48 +90,19 @@ export function Header() {
               </span>
             </div>
 
-            {/* Connection Button */}
-            <div className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
-              <button
-                onClick={connect}
-                disabled={isConnecting || isConnected}
-                className={`
-                  group relative
-                  text-white font-semibold
-                  px-5 py-2.5
-                  rounded-lg
-                  text-sm
-                  transition-all duration-500
-                  hover:scale-105
-                  shadow-md shadow-purple-500/20
-                  overflow-hidden will-change-transform
-                  ${
-                    isConnected
-                      ? "bg-gradient-to-r from-green-600 to-blue-600 cursor-default"
-                      : "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 hover:shadow-lg hover:shadow-purple-500/30"
-                  }
-                  ${isConnecting ? "animate-pulse cursor-wait" : ""}
-                `}
-              >
-                {!isConnected && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/15 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                )}
-                <span className="flex items-center justify-center relative z-10">
-                  {isConnecting ? (
-                    "Connecting..."
-                  ) : isConnected ? (
-                    <>
-                      <Check className="mr-2 h-4 w-4" />
-                      {truncateAddress(userAddress!)}
-                    </>
-                  ) : (
-                    <>
-                      Connect Wallet{" "}
-                      <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300 will-change-transform" />
-                    </>
-                  )}
-                </span>
-              </button>
+            {/* Authentication Layout */}
+            <div className="transform  opacity-0 animate-[slideInUp_0.6s_ease-out_1.6s_forwards]">
+              <AuthLayout
+                isConnected={isConnected}
+                isConnecting={isConnecting}
+                userAddress={userAddress}
+                isSignedIn={isSignedIn}
+                userEmail={userEmail}
+                onConnect={connect}
+                onDisconnect={disconnect}
+                onSignIn={signIn}
+                onSignOut={signOut}
+              />
             </div>
           </div>
         </div>
