@@ -25,7 +25,7 @@ export function Hero({ onStart }: HeroProps) {
             <h1 className="transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_0.4s_forwards] text-5xl md:text-6xl font-bold text-white leading-tight">
               Verify Your Identity
               <br />
-              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent inline-block transform translate-y-10 opacity-0 animate-[slideInUp_0.6s_ease-out_0.6s_forwards] will-change-transform hover:scale-105 transition-transform duration-300">
+              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent inline-block transform  opacity-0 animate-[slideInUp_0.6s_ease-out_0.6s_forwards] will-change-transform hover:scale-105 transition-transform duration-300">
                 Without Revealing It
               </span>
             </h1>
@@ -109,7 +109,8 @@ export function Hero({ onStart }: HeroProps) {
                   </span>
                 </button>
                 <p className="text-sm text-amber-400/80">
-                  Please connect your Lace Midnight Preview wallet to start verification
+                  Please connect your Lace Midnight Preview wallet to start
+                  verification
                 </p>
               </div>
             )}
