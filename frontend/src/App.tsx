@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Header } from "./components/Header";
-import { Hero } from "./components/Hero";
-import { VerificationFlow } from "./components/VerificationFlow";
+import { Header } from "./components/layout/Header";
+import { Hero } from "./components/wallet/Hero";
+import { VerificationFlow } from "./components/verification/VerificationFlow";
 import { PresentationRequestFlow } from "./components/openid/PresentationRequestFlow";
-import { Footer } from "./components/Footer";
+import { Footer } from "./components/layout/Footer";
 
 type AppView = 'hero' | 'zk-verification' | 'openid-present';
 

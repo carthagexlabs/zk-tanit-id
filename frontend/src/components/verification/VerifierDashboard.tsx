@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { verifyProof } from "../services/zktanitid";
+import { verifyProof } from "../../services/zktanitid";
 
 const KINDS = ["nic_valid", "driver_valid", "student_enrolled"] as const;
 type Kind = (typeof KINDS)[number];

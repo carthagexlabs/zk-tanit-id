@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { StepIndicator } from "./StepIndicator";
-import { DataInputStep } from "./steps/DataInputStep";
+import { useState } from "react";
+import { StepIndicator } from "../layout/StepIndicator";
+import { CredentialLoadStep } from "./steps/CredentialLoadStep";
 import { ContractExecutionStep } from "./steps/ContractExecutionStep";
 import { ProofGenerationStep } from "./steps/ProofGenerationStep";
 import { ProofSubmissionStep } from "./steps/ProofSubmissionStep";
 import { VerificationCompleteStep } from "./steps/VerificationCompleteStep";
 import { ArrowLeft } from "lucide-react";
-import { ProofData } from "../contexts/WalletContext";
+import type { ProofData } from "../../types/proof";
+import type { SdJwtCredential, SelectedClaim } from "../../types/credential";
 
 interface VerificationFlowProps {
   currentStep: number;
@@ -15,10 +16,10 @@ interface VerificationFlowProps {
 }
 
 const steps = [
-  { title: "Input Data", description: "Enter your sensitive information" },
+  { title: "Load Credential", description: "Import SD-JWT VC & select claims" },
   {
     title: "Contract Execution",
-    description: "Local privacy-preserving-validation",
+    description: "Local privacy-preserving validation",
   },
   { title: "Generate Proof", description: "Create zero-knowledge proof" },
   { title: "Submit to Midnight", description: "Send proof to blockchain" },
@@ -33,12 +34,16 @@ export function VerificationFlow({
   onStepChange,
   onReset,
 }: VerificationFlowProps) {
-  const [userData, setUserData] = useState({
+  const [credential, setCredential] = useState<SdJwtCredential | null>(null);
+  const [selectedClaims, setSelectedClaims] = useState<SelectedClaim[]>([]);
+
+  // Derive userData from credential for backward compat with existing steps
+  const userData = {
     dateOfBirth: "",
-    nic: "",
+    nic: selectedClaims.find((c) => c.claim_name === "document_number")?.claim_value as string ?? "",
     education: "",
-    verificationClaim: "age_over_18",
-  });
+    verificationClaim: "valid_nic",
+  };
 
   // Lifted proof state to pass between steps
   const [proofData, setProofData] = useState<ProofData | null>(null);
@@ -53,6 +58,12 @@ export function VerificationFlow({
     if (currentStep > 1) {
       onStepChange(currentStep - 1);
     }
+  };
+
+  const handleCredentialLoaded = (cred: SdJwtCredential, claims: SelectedClaim[]) => {
+    setCredential(cred);
+    setSelectedClaims(claims);
+    handleNext();
   };
 
   return (
@@ -83,15 +94,12 @@ export function VerificationFlow({
 
         <div className="mt-12 animate-fade-in-up animation-delay-400">
           {currentStep === 1 && (
-            <DataInputStep
-              userData={userData}
-              onDataChange={setUserData}
-              onNext={handleNext}
-            />
+            <CredentialLoadStep onNext={handleCredentialLoaded} />
           )}
-          {currentStep === 2 && (
+          {currentStep === 2 && credential && (
             <ContractExecutionStep
-              userData={userData}
+              credential={credential}
+              selectedClaims={selectedClaims}
               onNext={handleNext}
               onBack={handleBack}
             />

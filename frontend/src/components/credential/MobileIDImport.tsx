@@ -14,7 +14,7 @@ export default function MobileIDImport({ onImported }: Props) {
 
   async function handleImport() {
     try {
-      const res = await fetch("/demo_mobile_id/mobile_id_cert.json");
+      const res = await fetch("/demo/mobile_id/mobile_id_cert.json");
       const cert = await res.json();
 
       // --- Demo verification (stub) ---

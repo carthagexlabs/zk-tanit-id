@@ -1,0 +1,11 @@
+services:
+  proof-server:
+    image: midnightntwrk/proof-server:8.0.0-arm64
+    command: ['midnight-proof-server', '-v']
+    ports:
+    - '6300:6300'
+    volumes:
+    - proof-server-data:/root/.midnight
+
+volumes:
+  proof-server-data:

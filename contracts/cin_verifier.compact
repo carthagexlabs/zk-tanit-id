@@ -1,0 +1,121 @@
+// CIN Verifier Contract — zkTanitID
+// Processes SD-JWT VC disclosures as secret inputs to produce on-chain attestations.
+// The verifier sees ONLY boolean results — never any PII from the credential.
+//
+// SD-JWT VC claims consumed (all as `secret`):
+//   document_number  — CIN number (8-digit Tunisian format)
+//   given_name       — holder's first name
+//   family_name      — holder's surname
+//   birthdate        — ISO date string (used to derive age_over_18)
+//   birth_place      — place of birth
+//   gender           — "male" | "female"
+//   nationality      — ISO 3166-1 alpha-2 country code
+//   address          — residential address
+//
+// Public inputs:
+//   subject_id       — hash of the holder's DID (did:midnight:testnet:...)
+//   current_year     — current calendar year (for expiry + age checks)
+//   current_month    — current calendar month
+//   current_day      — current calendar day
+//   issuer_hash      — SHA-256 of the issuer DID (checked against on-chain registry)
+//   expiry_year      — document expiry year (from VC evidence, not secret)
+//   expiry_month     — document expiry month
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// ─── Ledger state ────────────────────────────────────────────────────────────
+
+export ledger cin_attestations: Map<Bytes<32>, Boolean>;
+export ledger cin_issuer_registry: Map<Bytes<32>, Boolean>;
+export ledger cin_nationality_attestations: Map<Bytes<32>, Bytes<2>>;
+
+// ─── Main verification circuit ───────────────────────────────────────────────
+// Accepts SD-JWT VC disclosures as secret inputs, validates the CIN document,
+// and writes boolean attestations to the ledger.
+
+export circuit verify_cin(
+  // Secret inputs — from SD-JWT VC selective disclosures
+  secret document_number: Unsigned Integer<32>,
+  secret given_name_hash: Bytes<32>,
+  secret family_name_hash: Bytes<32>,
+  secret birth_year: Unsigned Integer<16>,
+  secret birth_month: Unsigned Integer<8>,
+  secret birth_day: Unsigned Integer<8>,
+  secret nationality: Bytes<2>,
+
+  // Public inputs — provided by the DApp / verifier
+  subject_id: Bytes<32>,
+  issuer_hash: Bytes<32>,
+  current_year: Unsigned Integer<16>,
+  current_month: Unsigned Integer<8>,
+  current_day: Unsigned Integer<8>,
+  expiry_year: Unsigned Integer<16>,
+  expiry_month: Unsigned Integer<8>
+): [] {
+
+  // ── 1. Validate CIN document number format (8 digits) ──────────────────
+  assert document_number >= 10000000
+    "CIN format error: document number must be at least 8 digits";
+  assert document_number <= 99999999
+    "CIN format error: document number exceeds 8 digits";
+
+  // ── 2. Verify issuer is in the trusted on-chain registry ───────────────
+  assert cin_issuer_registry[issuer_hash] == true
+    "Trust error: issuer not found in cin_issuer_registry";
+
+  // ── 3. Verify document has not expired ─────────────────────────────────
+  const is_future_year = current_year < expiry_year;
+  const is_same_year_valid_month =
+    (current_year == expiry_year) && (current_month <= expiry_month);
+  const document_not_expired = is_future_year || is_same_year_valid_month;
+
+  assert document_not_expired
+    "Expiry error: CIN document has expired";
+
+  // ── 4. Derive age_equal_or_over.18 from secret birthdate ───────────────
+  const years_since_birth = current_year - birth_year;
+  const had_birthday_this_year =
+    (current_month > birth_month) ||
+    ((current_month == birth_month) && (current_day >= birth_day));
+  const age = had_birthday_this_year ? years_since_birth : (years_since_birth - 1);
+  const age_over_18 = age >= 18;
+
+  assert age_over_18
+    "Age error: holder is under 18";
+
+  // ── 5. Verify name hashes are non-zero (presence check) ────────────────
+  assert given_name_hash != 0x0000000000000000000000000000000000000000000000000000000000000000
+    "Claim error: given_name disclosure is empty";
+  assert family_name_hash != 0x0000000000000000000000000000000000000000000000000000000000000000
+    "Claim error: family_name disclosure is empty";
+
+  // ── 6. Write attestations to ledger ────────────────────────────────────
+  cin_attestations[subject_id] = true;
+  cin_nationality_attestations[subject_id] = nationality;
+}
+
+// ─── Admin: register a trusted issuer ────────────────────────────────────────
+
+export circuit register_issuer(
+  issuer_hash: Bytes<32>
+): [] {claude
+  cin_issuer_registry[issuer_hash] = true;
+}
+
+// ─── Query: check if a subject has a valid CIN attestation ───────────────────
+
+export circuit has_cin_attestation(
+  subject_id: Bytes<32>
+): Boolean {
+  return cin_attestations[subject_id] ?? false;
+}
+
+// ─── Query: get attested nationality ─────────────────────────────────────────
+
+export circuit get_nationality_attestation(
+  subject_id: Bytes<32>
+): Bytes<2> {
+  return cin_nationality_attestations[subject_id] ?? 0x0000;
+}

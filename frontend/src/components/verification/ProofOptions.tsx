@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { generateProof } from "../services/zktanitid";
+import { generateProof } from "../../services/zktanitid";
 
 export default function ProofOptions({
   kind,

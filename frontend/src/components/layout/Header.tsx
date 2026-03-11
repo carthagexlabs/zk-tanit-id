@@ -5,8 +5,8 @@ import {
   ArrowRight,
   Check,
 } from "lucide-react";
-import logo from "../assets/logo-zktanit.png";
-import { useWallet } from "../hooks/useWallet";
+import logo from "../../assets/logo-zktanit.png";
+import { useWallet } from "../../hooks/useWallet";
 
 // --- Helper function to shorten the address ---
 const truncateAddress = (address: string): string => {

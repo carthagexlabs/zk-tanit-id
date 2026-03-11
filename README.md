@@ -4,7 +4,7 @@
   <img src="frontend/public/zktanitid_logo.png" width="400" />
 </p>
 
-**Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify facts about a user — like **Age ≥ 18**, **Valid NIC**, or **Student Enrolment** — **without revealing raw personal data (PII)**.
+**Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify that a user holds a **Valid CIN (Carte d’Identité Nationale)** — **without revealing raw personal data (PII)**.
 
 ### ✨ Why “ZKTanitID”
 We chose the name **ZKTanitID** after [Tanit](https://en.wikipedia.org/wiki/Tanit), the Carthaginian goddess of protection and fertility, whose symbol remains one of Tunisia’s most enduring cultural icons. Just as Tanit safeguarded her people, **ZKTanitID protects users’ digital identities**: revealing only what is necessary and keeping everything else hidden. This blend of **heritage and innovation** positions ZKTanitID as a uniquely Tunisian approach to privacy-preserving digital identity — rooted in trust, designed for the future.
@@ -25,24 +25,20 @@ At the same time, private‑sector **KYC/AML** practices push for extensive data
 ---
 
 ## Demo Features
-- ✅ **Age ≥ 18** verifier (no DOB disclosure)
-- ✅ **Valid NIC** verifier (no NIC number disclosure; supports revocation root)
-- ✅ **Current Student** verifier (term-bounded, identity‑preserving)
+- ✅ **Valid CIN** verifier (no CIN number disclosure; supports revocation root)
 - 🔒 **No raw PII on‑chain** — only commitments + ZK proofs
 - 🧾 **Open-source** (Apache‑2.0) and auditable (avoids “black box” concerns)
 
 ---
 
 ## Architecture
-- **Contracts (Compact):** verifier contracts for age, NIC (National Identity Card) validity, and student status.
+- **Contracts (Compact):** verifier contract for CIN (Carte d'Identité Nationale) validity.
 - **Frontend (MidnightJS):** request → generate proof locally → submit to contract.
 - **Data:** credentials are stored client‑side; blockchain sees only **commitments & proofs**.
 
 ```
 /contracts
-  verifier_age.compact
-  verifier_nic.compact
-  verifier_student.compact
+  cin_verifier.compact
 /frontend
   public/
   src/
@@ -94,11 +90,11 @@ This ensures compliance with data protection while enabling verifiable identity 
 
 2. **Compact Contract Execution**  
    A privacy-preserving smart contract, written in Compact, runs locally.  
-   It checks the required condition (e.g., "Is user over 18?" or "Does user have valid NIC?").
+   It checks whether the user holds a valid CIN.
 
 3. **Zero-Knowledge Proof Generation**  
    Instead of sending raw data, the app generates a **ZK proof** that the condition holds true.  
-   Example: *“I am over 18”* without revealing the actual date of birth.
+   Example: *”I hold a valid CIN”* without revealing the actual CIN number.
 
 4. **Proof Submission to Midnight**  
    The proof is sent to the Midnight blockchain.  

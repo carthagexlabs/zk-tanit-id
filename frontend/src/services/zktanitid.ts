@@ -1,5 +1,7 @@
 // minimal demo stub so the UI runs; replace with real MidnightJS later
-export type VerifierKind = 'nic_valid' | 'driver_valid' | 'student_enrolled';
+import type { VerifierKind } from '../types/proof';
+
+export type { VerifierKind } from '../types/proof';
 
 export async function generateProof(
   kind: VerifierKind,

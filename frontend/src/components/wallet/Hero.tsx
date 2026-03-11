@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRight, Shield, Eye, Zap, Lock, Wallet, FileCheck } from "lucide-react";
-import { useWallet } from "../hooks/useWallet";
+import { useWallet } from "../../hooks/useWallet";
 
 interface HeroProps {
   onStart: () => void;

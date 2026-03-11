@@ -1,6 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { FaGithub, FaXTwitter } from "react-icons/fa6";
-import logo from "../assets/logo-zktanit.png";
+import logo from "../../assets/logo-zktanit.png";
 
 export function Footer() {
   return (

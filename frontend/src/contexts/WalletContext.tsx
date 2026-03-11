@@ -1,38 +1,14 @@
 import { createContext, useState, useCallback, useRef, ReactNode } from 'react';
 import '@midnight-ntwrk/dapp-connector-api';
-import type {
-  InitialAPI,
-  ConnectedAPI,
-  Configuration,
-} from '@midnight-ntwrk/dapp-connector-api';
+import type { InitialAPI } from '@midnight-ntwrk/dapp-connector-api';
+import type { ProofData } from '../types/proof';
+import type { WalletContextType } from '../types/wallet';
+
+export type { ProofData } from '../types/proof';
+export type { WalletContextType } from '../types/wallet';
 
 // Network ID — must match what Lace is configured to
 const MIDNIGHT_NETWORK_ID = 'preprod';
-
-/**
- * Proof data structure
- */
-export interface ProofData {
-  proof: string;
-  publicInputs: Record<string, unknown>;
-  kind: string;
-  timestamp: number;
-}
-
-/**
- * Wallet context interface
- */
-export interface WalletContextType {
-  walletApi: ConnectedAPI | null;
-  isConnected: boolean;
-  isConnecting: boolean;
-  userAddress: string | null;
-  configuration: Configuration | null;
-
-  connect: () => Promise<void>;
-  disconnect: () => void;
-  submitProofTransaction: (proofData: ProofData) => Promise<void>;
-}
 
 export const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
@@ -49,11 +25,28 @@ const withTimeout = <T,>(promise: Promise<T>, ms: number, label: string): Promis
   });
 };
 
+// Find the Lace wallet from window.midnight (may be under 'mnLace' or a UUID key)
+const findLaceWallet = (): InitialAPI | null => {
+  if (!window.midnight) return null;
+  // Legacy key
+  if (window.midnight.mnLace) return window.midnight.mnLace;
+  // Newer versions register under a random UUID key
+  for (const key of Object.keys(window.midnight)) {
+    const entry = (window.midnight as Record<string, InitialAPI>)[key];
+    if (entry && typeof entry === 'object' && 'apiVersion' in entry) {
+      console.log('[ZKTanitID] Found wallet under key:', key);
+      return entry;
+    }
+  }
+  return null;
+};
+
 // Poll for the Midnight Lace wallet with timeout (handles extension injection timing)
 const waitForWalletProvider = (timeoutMs = 3000): Promise<InitialAPI | null> => {
   return new Promise((resolve) => {
-    if (window.midnight?.mnLace) {
-      resolve(window.midnight.mnLace);
+    const wallet = findLaceWallet();
+    if (wallet) {
+      resolve(wallet);
       return;
     }
 
@@ -62,10 +55,11 @@ const waitForWalletProvider = (timeoutMs = 3000): Promise<InitialAPI | null> => 
 
     const timer = setInterval(() => {
       elapsed += pollInterval;
-      if (window.midnight?.mnLace) {
+      const w = findLaceWallet();
+      if (w) {
         clearInterval(timer);
         console.log('[ZKTanitID] Midnight Lace detected after', elapsed, 'ms');
-        resolve(window.midnight.mnLace);
+        resolve(w);
       } else if (elapsed >= timeoutMs) {
         clearInterval(timer);
         resolve(null);
@@ -79,11 +73,11 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-  const [walletApi, setWalletApi] = useState<ConnectedAPI | null>(null);
+  const [walletApi, setWalletApi] = useState<import('@midnight-ntwrk/dapp-connector-api').ConnectedAPI | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [userAddress, setUserAddress] = useState<string | null>(null);
-  const [configuration, setConfiguration] = useState<Configuration | null>(null);
+  const [configuration, setConfiguration] = useState<import('@midnight-ntwrk/dapp-connector-api').Configuration | null>(null);
   // Synchronous guard to prevent double-connect (React state updates are async)
   const connectingRef = useRef(false);
 

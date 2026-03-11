@@ -7,7 +7,7 @@ type Props = {
 export default function LoadDemoButton({ onLoaded }: Props) {
   async function handleLoad() {
     try {
-      const res = await fetch("/demo_credentials/full_nic_vc.json");
+      const res = await fetch("/demo/credentials/full_nic_vc.json");
       const data = await res.json();
 
       // Map VC -> internal demo structure expected by ProofOptions

@@ -1,16 +1,20 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "zk-tanit-id",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "compile": "compact compile ../contracts/cin_verifier.compact ../contracts/managed/cin_verifier",
     "dev": "vite",
     "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules package-lock.json .eslintcache *.tsbuildinfo",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "proof-server:start": "docker compose -f ../infra/docker-compose.yml up -d",
+    "proof-server:stop": "docker compose -f ../infra/docker-compose.yml down"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.14.0",
@@ -46,7 +50,6 @@
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.3",
-    "autoprefixer": "^10.4.24",
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
