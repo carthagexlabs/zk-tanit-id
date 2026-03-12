@@ -10,10 +10,10 @@ ZKTanitID is a privacy-preserving identity attestation system built on the Midni
 
 ## Development Commands
 
-All commands run from the `frontend/` directory:
+All commands run from the `zktanitid-ui/` directory:
 
 ```bash
-cd frontend
+cd zktanitid-ui
 npm install    # Install dependencies
 npm run dev    # Start Vite dev server (hot reload)
 npm run build  # Production build
@@ -27,12 +27,12 @@ npm run clean # Clean project (remove build artifacts and dependencies)
 
 ```
 ├── contracts/                  # Midnight Compact smart contracts
-│   ├── cin_verifier.compact
-│   └── scripts/
-│       └── deploy.ts           # Contract deployment script
+│   └── cin_verifier.compact
+├── scripts/
+│   └── deploy.ts               # Contract deployment script
 ├── infra/                      # Infrastructure & DevOps
 │   └── docker-compose.yml      # Proof server (Docker)
-├── frontend/                   # React + TypeScript + Vite application
+├── zktanitid-ui/               # React + TypeScript + Vite application
 │   ├── public/
 │   │   └── demo/               # Demo/mock data (consolidated)
 │   │       ├── credentials/    # SD-JWT VC, NIC VC, selective disclosure

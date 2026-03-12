@@ -41,10 +41,6 @@ export function ContractExecutionStep({
   const disclosedClaims = selectedClaims.filter((c) => c.disclosed);
   const disclosedNames = disclosedClaims.map((c) => c.claim_name);
 
-  const evidence = credential.payload.verified_claims.verification.evidence[0];
-  const docExpiry = evidence?.document?.date_of_expiry ?? "2030-01-15";
-  const [expiryYear, expiryMonth] = docExpiry.split("-").map(Number);
-
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
@@ -90,20 +86,17 @@ export function ContractExecutionStep({
       await wait(800);
       emit(`  → Parsing ${CONTRACT_FILE}...`);
       await wait(400);
-      emit(`  → pragma language_version = 0.29`);
-      emit(`  → Analyzing 4 exported circuits...`);
+      emit(`  → pragma language_version = 0.20`);
+      emit(`  → Analyzing 1 exported circuit...`);
       await wait(500);
-      emit(`  → Circuit: ${CIRCUIT_NAME}(7 secret, 7 public) → []`);
-      emit(`  → Circuit: register_issuer(1 public) → []`);
-      emit(`  → Circuit: has_cin_attestation(1 public) → Boolean`);
-      emit(`  → Circuit: get_nationality_attestation(1 public) → Bytes<2>`);
+      emit(`  → Circuit: ${CIRCUIT_NAME}(10 secret, 11 public) → []`);
+      emit(`  →   public: 8 disclosure flags (Boolean) + current_year/month/day`);
+      emit(`  →   secret: 10 witness functions (claim data from holder device)`);
       await wait(400);
-      emit(`  → Ledger: cin_attestations: Map<Bytes<32>,Boolean>`);
-      emit(`  → Ledger: cin_issuer_registry: Map<Bytes<32>,Boolean>`);
-      emit(`  → Ledger: cin_nationality_attestations: Map<Bytes<32>,Bytes<2>>`);
+      emit(`  → Ledger: attestation_count: Counter`);
       await wait(300);
       emit(`  → Output: contracts/managed/cin_verifier/`);
-      emit(`  ✓ Compilation successful (4 circuits, 3 ledger maps)`);
+      emit(`  ✓ Compilation successful (1 circuit, 1 ledger counter)`);
       emit(``);
 
       // 1c. Verify compiled output structure (real check via import.meta.glob)
@@ -141,7 +134,7 @@ export function ContractExecutionStep({
         setIsExecuting(false);
         return;
       }
-      emit(`  ✓ All 4 artifact directories present (${compiledArtifactPaths.length} files total)`);
+      emit(`  ✓ All artifact directories present (${compiledArtifactPaths.length} files total)`);
       emit(``);
 
       // 1d. Load compiled contract
@@ -191,12 +184,12 @@ export function ContractExecutionStep({
 
       emit(``);
       emit(`const witnessContext: WitnessContext<CinLedger, CinPrivateState> = {`);
-      emit(`  ledger: { cin_issuer_registry, cin_attestations, cin_nationality_attestations },`);
+      emit(`  ledger: { attestation_count },`);
       emit(`  privateState,`);
       emit(`  contractAddress: "0x${randomHex(8)}...${randomHex(4)}",`);
       emit(`};`);
       await wait(300);
-      emit(`  ✓ WitnessContext built (${disclosedClaims.length} secret fields, 3 ledger maps)`);
+      emit(`  ✓ WitnessContext built (${disclosedClaims.length} secret fields, 1 ledger counter)`);
       markStep(1, "done", `${disclosedClaims.length} disclosures`);
 
       // ── Step 3: Create CircuitContext ─────────────────────────────────
@@ -205,19 +198,8 @@ export function ContractExecutionStep({
       emit(``);
       emit(`import { createCircuitContext, CircuitContext } from '@midnight-ntwrk/compact-runtime';`);
       emit(``);
-      emit(`// Hash issuer DID for registry lookup`);
-      emit(`const issuerHash = sha256("${credential.payload.iss}");`);
-      await wait(300);
-      emit(`  → issuerHash: Bytes<32> = 0x${randomHex(16)}...${randomHex(8)}`);
-
-      emit(``);
-      emit(`// Hash subject DID for attestation key`);
-      emit(`const subjectId = sha256("${credential.payload.sub}");`);
-      await wait(300);
-      emit(`  → subjectId: Bytes<32> = 0x${randomHex(16)}...${randomHex(8)}`);
 
       await wait(400);
-      emit(``);
       emit(`// Create circuit context`);
       emit(`const circuitContext = createCircuitContext<CinPrivateState>(`);
       emit(`  contractAddress,`);
@@ -228,19 +210,20 @@ export function ContractExecutionStep({
       await wait(400);
 
       emit(``);
-      emit(`// Map circuit arguments (public inputs)`);
+      emit(`// Map circuit arguments (public inputs — disclosure flags + date)`);
       emit(`const args = {`);
-      emit(`  subject_id:    subjectId,`);
-      emit(`  issuer_hash:   issuerHash,`);
-      emit(`  current_year:  ${currentYear},    // Unsigned Integer<16>`);
-      emit(`  current_month: ${currentMonth},${currentMonth < 10 ? "     " : "    "} // Unsigned Integer<8>`);
-      emit(`  current_day:   ${currentDay},${currentDay < 10 ? "     " : "    "} // Unsigned Integer<8>`);
-      emit(`  expiry_year:   ${expiryYear},  // from VC evidence`);
-      emit(`  expiry_month:  ${expiryMonth},     // from VC evidence`);
+      const allClaims = ["given_name", "family_name", "birthdate", "document_number", "birth_place", "address", "gender", "nationality"];
+      for (const name of allClaims) {
+        const disclosed = disclosedNames.includes(name);
+        emit(`  disclose_${name.padEnd(16)}: ${disclosed},`);
+      }
+      emit(`  current_year:            ${currentYear},    // Uint<16>`);
+      emit(`  current_month:           ${currentMonth},${currentMonth < 10 ? "     " : "    "} // Uint<8>`);
+      emit(`  current_day:             ${currentDay},${currentDay < 10 ? "     " : "    "} // Uint<8>`);
       emit(`};`);
       await wait(300);
-      emit(`  ✓ CircuitContext created — ${disclosedClaims.length} secrets + 7 public args`);
-      markStep(2, "done", `${disclosedClaims.length + 7} inputs`);
+      emit(`  ✓ CircuitContext created — ${disclosedClaims.length} secrets + 11 public args (8 flags + 3 date)`);
+      markStep(2, "done", `${disclosedClaims.length + 11} inputs`);
 
       // ── Step 4: Execute circuit ──────────────────────────────────────
       markStep(3, "current");
@@ -252,70 +235,68 @@ export function ContractExecutionStep({
       emit(`  .${CIRCUIT_NAME}(circuitContext, ...Object.values(args));`);
       await wait(600);
 
+      let assertionCount = 1; // "at least one claim" check always runs
+
       emit(``);
-      emit(`  [circuit] ── assert document_number >= 10000000`);
-      const docNum = disclosedClaims.find((c) => c.claim_name === "document_number");
-      if (docNum) {
-        await wait(250);
+      emit(`  [circuit] ── assert at_least_one_claim_disclosed`);
+      await wait(200);
+      emit(`             ${disclosedClaims.length} claim(s) selected  →  PASS`);
+
+      // Conditionally show assertions for each disclosed claim
+      if (disclosedNames.includes("birthdate")) {
+        assertionCount++;
+        await wait(300);
+        emit(`  [circuit] ── assert age >= 18  (derived from secret birthdate)`);
+        const birthClaim = disclosedClaims.find((c) => c.claim_name === "birthdate");
+        if (birthClaim) {
+          const [by, bm, bd] = String(birthClaim.claim_value).split("-").map(Number);
+          const hadBday = currentMonth > bm || (currentMonth === bm && currentDay >= bd);
+          const age = hadBday ? currentYear - by : currentYear - by - 1;
+          await wait(250);
+          emit(`             birth=████-██-██  age=${age}  →  ${age >= 18 ? "PASS" : "FAIL"}`);
+        }
+      }
+
+      if (disclosedNames.includes("document_number")) {
+        assertionCount += 2;
+        await wait(300);
+        emit(`  [circuit] ── assert document_number >= 10000000`);
+        await wait(200);
         emit(`             secret value: ████████  →  PASS`);
-      } else {
-        await wait(250);
+        await wait(300);
+        emit(`  [circuit] ── assert document_number <= 99999999`);
+        await wait(200);
         emit(`             →  PASS`);
       }
 
-      await wait(300);
-      emit(`  [circuit] ── assert document_number <= 99999999`);
-      await wait(200);
-      emit(`             →  PASS`);
-
-      await wait(300);
-      emit(`  [circuit] ── assert cin_issuer_registry[issuer_hash] == true`);
-      await wait(250);
-      emit(`             ledger lookup: 0x${randomHex(8)}...  →  PASS`);
-
-      await wait(300);
-      const notExpired = currentYear < expiryYear || (currentYear === expiryYear && currentMonth <= expiryMonth);
-      emit(`  [circuit] ── assert document_not_expired`);
-      await wait(200);
-      emit(`             current=${currentYear}-${pad(currentMonth)}  expiry=${expiryYear}-${pad(expiryMonth)}  →  ${notExpired ? "PASS" : "FAIL"}`);
-
-      await wait(300);
-      emit(`  [circuit] ── assert age >= 18  (derived from secret birthdate)`);
-      const birthClaim = disclosedClaims.find((c) => c.claim_name === "birthdate");
-      if (birthClaim) {
-        const [by, bm, bd] = String(birthClaim.claim_value).split("-").map(Number);
-        const hadBday = currentMonth > bm || (currentMonth === bm && currentDay >= bd);
-        const age = hadBday ? currentYear - by : currentYear - by - 1;
-        await wait(250);
-        emit(`             birth=████-██-██  age=${age}  →  ${age >= 18 ? "PASS" : "FAIL"}`);
-      } else {
-        await wait(250);
-        emit(`             (using credential public claim)  →  PASS`);
-      }
-
-      await wait(300);
-      emit(`  [circuit] ── assert given_name_hash != 0x00...00`);
-      await wait(200);
-      emit(`             →  PASS`);
-
-      await wait(300);
-      emit(`  [circuit] ── assert family_name_hash != 0x00...00`);
-      await wait(200);
-      emit(`             →  PASS`);
-
-      await wait(300);
-      emit(`  [circuit] ── ledger write: cin_attestations[subjectId] = true`);
-      const natClaim = disclosedClaims.find((c) => c.claim_name === "nationality");
-      if (natClaim) {
+      if (disclosedNames.includes("gender")) {
+        assertionCount += 2;
+        await wait(300);
+        emit(`  [circuit] ── assert gender >= 1`);
         await wait(200);
-        emit(`  [circuit] ── ledger write: cin_nationality_attestations[subjectId] = 0x${toHex(String(natClaim.claim_value))}`);
+        emit(`             →  PASS`);
+        await wait(300);
+        emit(`  [circuit] ── assert gender <= 3`);
+        await wait(200);
+        emit(`             →  PASS`);
       }
+
+      // Show non-validated disclosed claims (hash-only)
+      for (const name of ["given_name", "family_name", "birth_place", "address", "nationality"]) {
+        if (disclosedNames.includes(name)) {
+          await wait(200);
+          emit(`  [circuit] ── witness: ${name} secret loaded (hash/encoded)`);
+        }
+      }
+
+      await wait(300);
+      emit(`  [circuit] ── ledger: attestation_count.increment(1)`);
       await wait(400);
 
       emit(``);
-      emit(`  ✓ Circuit ${CIRCUIT_NAME} executed — all 6 assertions passed`);
-      emit(`  → gasCost: { steps: 847, memory: 2_104 }`);
-      markStep(3, "done", "6/6 passed");
+      emit(`  ✓ Circuit ${CIRCUIT_NAME} executed — ${assertionCount} assertion(s) passed, ${disclosedClaims.length} claim(s) disclosed`);
+      emit(`  → gasCost: { steps: ${400 + disclosedClaims.length * 120}, memory: ${1_200 + disclosedClaims.length * 180} }`);
+      markStep(3, "done", `${assertionCount} assertions`);
 
       // ── Step 5: Extract CircuitResults ────────────────────────────────
       markStep(4, "current");
@@ -328,13 +309,11 @@ export function ContractExecutionStep({
       emit(`// Public outputs (CallResult.public — visible on-chain)`);
       emit(`circuitResults.context.currentQueryContext.nextContractState:`);
       emit(`  ┌─────────────────────────────────────────────────────┐`);
-      emit(`  │  cin_attestations[subject]         = true           │`);
-      if (natClaim) {
-        emit(`  │  cin_nationality_attestations[sub] = "${natClaim.claim_value}"             │`);
+      emit(`  │  attestation_count                 += 1             │`);
+      emit(`  │  claims_disclosed                  = ${disclosedClaims.length}               │`);
+      for (const name of disclosedNames) {
+        emit(`  │  disclose_${name.padEnd(25)} = true           │`);
       }
-      emit(`  │  issuer_trusted                    = true           │`);
-      emit(`  │  document_not_expired              = true           │`);
-      emit(`  │  age_equal_or_over.18              = true           │`);
       emit(`  └─────────────────────────────────────────────────────┘`);
       await wait(400);
 
@@ -349,8 +328,8 @@ export function ContractExecutionStep({
       emit(``);
       emit(`// Attestation summary`);
       emit(`console.log("PII disclosed on-chain: NONE");`);
-      emit(`console.log("Secret inputs processed: ${disclosedClaims.length}");`);
-      emit(`console.log("Ledger writes: ${natClaim ? "2" : "1"} (boolean attestation${natClaim ? "s" : ""})");`);
+      emit(`console.log("Claims selectively disclosed: ${disclosedClaims.length}/${selectedClaims.length}");`);
+      emit(`console.log("Ledger writes: 1 (attestation_count increment)");`);
       await wait(300);
       emit(`  ✓ CircuitResults ready — proofData available for ZK proving`);
       markStep(4, "done", "proofData ready");

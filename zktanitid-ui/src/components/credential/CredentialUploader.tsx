@@ -1,4 +1,4 @@
-// frontend/src/components/CredentialUploader.tsx
+// zktanitid-ui/src/components/credential/CredentialUploader.tsx
 import React, { useState } from "react";
 
 export default function CredentialUploader({ onUpload }: { onUpload: (c: any) => void }) {

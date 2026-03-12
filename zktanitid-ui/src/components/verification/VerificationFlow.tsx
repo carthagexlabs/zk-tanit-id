@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StepIndicator } from "../layout/StepIndicator";
 import { CredentialLoadStep } from "./steps/CredentialLoadStep";
 import { ContractExecutionStep } from "./steps/ContractExecutionStep";
+import { DeployContractStep } from "./steps/DeployContractStep";
 import { ProofGenerationStep } from "./steps/ProofGenerationStep";
 import { ProofSubmissionStep } from "./steps/ProofSubmissionStep";
 import { VerificationCompleteStep } from "./steps/VerificationCompleteStep";
@@ -21,6 +22,10 @@ const steps = [
     title: "Contract Execution",
     description: "Local privacy-preserving validation",
   },
+  {
+    title: "Deploy Contract",
+    description: "Deploy to Midnight network",
+  },
   { title: "Generate Proof", description: "Create zero-knowledge proof" },
   { title: "Submit to Midnight", description: "Send proof to blockchain" },
   {
@@ -36,6 +41,7 @@ export function VerificationFlow({
 }: VerificationFlowProps) {
   const [credential, setCredential] = useState<SdJwtCredential | null>(null);
   const [selectedClaims, setSelectedClaims] = useState<SelectedClaim[]>([]);
+  const [contractAddress, setContractAddress] = useState<string>("");
 
   // Derive userData from credential for backward compat with existing steps
   const userData = {
@@ -63,6 +69,11 @@ export function VerificationFlow({
   const handleCredentialLoaded = (cred: SdJwtCredential, claims: SelectedClaim[]) => {
     setCredential(cred);
     setSelectedClaims(claims);
+    handleNext();
+  };
+
+  const handleContractDeployed = (address: string) => {
+    setContractAddress(address);
     handleNext();
   };
 
@@ -105,6 +116,12 @@ export function VerificationFlow({
             />
           )}
           {currentStep === 3 && (
+            <DeployContractStep
+              onNext={handleContractDeployed}
+              onBack={handleBack}
+            />
+          )}
+          {currentStep === 4 && (
             <ProofGenerationStep
               userData={userData}
               onNext={handleNext}
@@ -112,7 +129,7 @@ export function VerificationFlow({
               onProofGenerated={setProofData}
             />
           )}
-          {currentStep === 4 && (
+          {currentStep === 5 && (
             <ProofSubmissionStep
               onNext={handleNext}
               onBack={handleBack}
@@ -120,7 +137,7 @@ export function VerificationFlow({
               userData={userData}
             />
           )}
-          {currentStep === 5 && (
+          {currentStep === 6 && (
             <VerificationCompleteStep userData={userData} onReset={onReset} />
           )}
         </div>

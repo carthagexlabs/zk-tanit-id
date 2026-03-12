@@ -1,7 +1,7 @@
 # ZKTanitID - Privacy-Preserving Identity Attestations - This project is built on the Midnight Network
 
 <p align="center">
-  <img src="frontend/public/zktanitid_logo.png" width="400" />
+  <img src="zktanitid-ui/public/zktanitid_logo.png" width="400" />
 </p>
 
 **Protect facts, not data.** ZKTanitID shows how to use **Midnight’s Compact smart contracts** and a **MidnightJS** web app to verify that a user holds a **Valid CIN (Carte d’Identité Nationale)** — **without revealing raw personal data (PII)**.
@@ -39,7 +39,7 @@ At the same time, private‑sector **KYC/AML** practices push for extensive data
 ```
 /contracts
   cin_verifier.compact
-/frontend
+/zktanitid-ui
   public/
   src/
     App.tsx
@@ -59,7 +59,7 @@ README.md
 
 ### 1) Frontend
 ```bash
-cd frontend
+cd zktanitid-ui
 npm install
 npm run dev
 ```
@@ -82,7 +82,7 @@ ZKTanitID leverages Midnight’s split-computation model:
 
 This ensures compliance with data protection while enabling verifiable identity checks.
 
-![ZKTanitID Flowchart](./frontend/public/zktanitid_midnight_flowchart.png)
+![ZKTanitID Flowchart](./zktanitid-ui/public/zktanitid_midnight_flowchart.png)
 
 1. **User Inputs Data (Off-Chain)**  
    The citizen enters sensitive details such as Date of Birth, NIC, or education records into the ZKTanitID app.  

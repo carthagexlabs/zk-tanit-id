@@ -219,7 +219,7 @@ The **Carte d'Identite Nationale (CIN)** is Tunisia's national identity card, is
 ### Complete OpenID Module Structure
 
 ```
-frontend/src/
+zktanitid-ui/src/
 |
 +-- types/
 |   +-- eupid.ts                          # All type definitions
@@ -494,7 +494,7 @@ Navigation functions in `App.tsx`:
 ### Setup & Run
 
 ```bash
-cd frontend
+cd zktanitid-ui
 npm install
 npm run dev       # Start dev server (hot reload)
 npm run build     # Production build (TypeScript check)
@@ -595,7 +595,7 @@ function MyComponent() {
 ### Run Tests
 
 ```bash
-cd frontend
+cd zktanitid-ui
 npm test              # Run all 51 tests once
 npm run test:watch    # Interactive watch mode
 ```
@@ -659,7 +659,7 @@ To add another credential type (e.g., Tunisian passport, driving license):
 
 ## Demo Reference Files
 
-Located in `frontend/public/demo_credentials/`:
+Located in `zktanitid-ui/public/demo_credentials/`:
 
 | File | Description |
 |---|---|

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Header } from "./components/layout/Header";
 import { Hero } from "./components/wallet/Hero";
 import { VerificationFlow } from "./components/verification/VerificationFlow";
-import { PresentationRequestFlow } from "./components/openid/PresentationRequestFlow";
 import { Footer } from "./components/layout/Footer";
 
-type AppView = 'hero' | 'zk-verification' | 'openid-present';
+type AppView = 'hero' | 'zk-verification';
 
 export default function App() {
   const [appView, setAppView] = useState<AppView>('hero');
@@ -14,10 +13,6 @@ export default function App() {
   const handleStartZk = () => {
     setCurrentStep(1);
     setAppView('zk-verification');
-  };
-
-  const handleStartOpenID = () => {
-    setAppView('openid-present');
   };
 
   const handleBackToHero = () => {
@@ -34,7 +29,7 @@ export default function App() {
 
         <main className="relative z-10 overflow-hidden">
           {appView === 'hero' && (
-            <Hero onStart={handleStartZk} onStartOpenID={handleStartOpenID} />
+            <Hero onStart={handleStartZk} />
           )}
           {appView === 'zk-verification' && (
             <VerificationFlow
@@ -42,9 +37,6 @@ export default function App() {
               onStepChange={setCurrentStep}
               onReset={handleBackToHero}
             />
-          )}
-          {appView === 'openid-present' && (
-            <PresentationRequestFlow onBack={handleBackToHero} />
           )}
         </main>
 

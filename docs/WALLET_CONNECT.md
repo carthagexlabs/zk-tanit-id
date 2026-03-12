@@ -20,7 +20,7 @@ ZK-Tanit-ID integrates with the **Lace Midnight Preview** browser extension wall
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  WalletProvider (React Context)                          │
-│  frontend/src/contexts/WalletContext.tsx                  │
+│  zktanitid-ui/src/contexts/WalletContext.tsx                  │
 │                                                          │
 │  State: walletApi, isConnected, isConnecting,            │
 │         userAddress, configuration                       │
@@ -29,7 +29,7 @@ ZK-Tanit-ID integrates with the **Lace Midnight Preview** browser extension wall
 │           submitProofTransaction()                       │
 ├──────────────────────────────────────────────────────────┤
 │                  useWallet() Hook                        │
-│          frontend/src/hooks/useWallet.ts                 │
+│          zktanitid-ui/src/hooks/useWallet.ts                 │
 ├────────────────────┬─────────────────────────────────────┤
 │  Header.tsx        │  Hero.tsx                           │
 │  "Connect Wallet"  │  "Connect Wallet First"             │
@@ -43,10 +43,10 @@ ZK-Tanit-ID integrates with the **Lace Midnight Preview** browser extension wall
 
 | File | Purpose |
 |---|---|
-| `frontend/src/contexts/WalletContext.tsx` | Core wallet logic: provider, state, connect/disconnect/submit |
-| `frontend/src/hooks/useWallet.ts` | Convenience hook wrapping `useContext(WalletContext)` |
-| `frontend/src/components/Header.tsx` | Navbar connect button, displays truncated address when connected |
-| `frontend/src/components/Hero.tsx` | Hero CTA button, toggles between "Connect Wallet First" and "Start Verification" |
+| `zktanitid-ui/src/contexts/WalletContext.tsx` | Core wallet logic: provider, state, connect/disconnect/submit |
+| `zktanitid-ui/src/hooks/useWallet.ts` | Convenience hook wrapping `useContext(WalletContext)` |
+| `zktanitid-ui/src/components/Header.tsx` | Navbar connect button, displays truncated address when connected |
+| `zktanitid-ui/src/components/Hero.tsx` | Hero CTA button, toggles between "Connect Wallet First" and "Start Verification" |
 
 ## Connection Flow
 
@@ -213,15 +213,15 @@ const MIDNIGHT_NETWORK_ID = 'preprod'; // Change this value
 
 ## Testing
 
-Unit tests are located at `frontend/src/contexts/WalletContext.test.tsx` (8 tests).
+Unit tests are located at `zktanitid-ui/src/contexts/WalletContext.test.tsx` (8 tests).
 
 ```bash
-cd frontend
+cd zktanitid-ui
 npm test              # Run all tests once
 npm run test:watch    # Watch mode
 ```
 
-Tests use **Vitest + jsdom + @testing-library/react** with the setup file at `frontend/src/test/setup.ts`.
+Tests use **Vitest + jsdom + @testing-library/react** with the setup file at `zktanitid-ui/src/test/setup.ts`.
 
 ## Troubleshooting
 
