@@ -187,8 +187,8 @@ export function ProofGenerationStep({ userData, onNext, onBack, onProofGenerated
                   <p className="text-white font-medium mt-1">Groth16</p>
                 </div>
                 <div className="bg-white/3 rounded-lg p-3">
-                  <span className="text-slate-500">Est. Fee</span>
-                  <p className="text-white font-medium mt-1">~0.001 NIGHT</p>
+                  <span className="text-slate-500">Est. DUST</span>
+                  <p className="text-white font-medium mt-1">~0.001 DUST</p>
                 </div>
               </div>
             </div>

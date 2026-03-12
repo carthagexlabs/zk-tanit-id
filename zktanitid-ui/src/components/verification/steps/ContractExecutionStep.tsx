@@ -295,7 +295,7 @@ export function ContractExecutionStep({
 
       emit(``);
       emit(`  ✓ Circuit ${CIRCUIT_NAME} executed — ${assertionCount} assertion(s) passed, ${disclosedClaims.length} claim(s) disclosed`);
-      emit(`  → gasCost: { steps: ${400 + disclosedClaims.length * 120}, memory: ${1_200 + disclosedClaims.length * 180} }`);
+      emit(`  → dustCost: { steps: ${400 + disclosedClaims.length * 120}, memory: ${1_200 + disclosedClaims.length * 180} }`);
       markStep(3, "done", `${assertionCount} assertions`);
 
       // ── Step 5: Extract CircuitResults ────────────────────────────────
@@ -303,7 +303,7 @@ export function ContractExecutionStep({
       await wait(500);
       emit(``);
       emit(`// Read CircuitResults`);
-      emit(`const { result, proofData, context, gasCost } = circuitResults;`);
+      emit(`const { result, proofData, context, dustCost } = circuitResults;`);
       await wait(400);
       emit(``);
       emit(`// Public outputs (CallResult.public — visible on-chain)`);

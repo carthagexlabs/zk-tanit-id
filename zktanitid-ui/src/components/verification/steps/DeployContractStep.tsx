@@ -92,7 +92,7 @@ export function DeployContractStep({ onNext, onBack }: DeployContractStepProps) 
 
       const txHash = `0x${randomHex(64)}`;
       emit(`  \u2192 Transaction hash: ${txHash.slice(0, 24)}...${txHash.slice(-8)}`);
-      emit(`  \u2192 Gas estimate: ~0.005 NIGHT`);
+      emit(`  \u2192 DUST estimate: ~0.005 DUST`);
       await wait(400);
       emit(`  \u2713 Deploy transaction broadcast`);
       markStep(2, "done", "broadcast");
@@ -179,8 +179,8 @@ export function DeployContractStep({ onNext, onBack }: DeployContractStepProps) 
             </p>
           </div>
           <div>
-            <span className="text-slate-500 text-xs uppercase tracking-wider">Est. Fee</span>
-            <p className="text-white text-sm mt-1">~0.005 NIGHT</p>
+            <span className="text-slate-500 text-xs uppercase tracking-wider">Est. DUST</span>
+            <p className="text-white text-sm mt-1">~0.005 DUST</p>
           </div>
         </div>
       </div>

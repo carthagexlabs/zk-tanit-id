@@ -122,8 +122,8 @@ export function ProofSubmissionStep({ onNext, onBack, proofData, userData }: Pro
                   <span className="text-purple-300 font-medium">{getClaimText()}</span>
                 </div>
                 <div className="border-t border-slate-700/50 pt-3 flex justify-between items-center">
-                  <span className="text-slate-500">Est. Fee</span>
-                  <span className="text-white font-medium">~0.001 NIGHT</span>
+                  <span className="text-slate-500">Est. DUST</span>
+                  <span className="text-white font-medium">~0.001 DUST</span>
                 </div>
               </div>
             </div>
