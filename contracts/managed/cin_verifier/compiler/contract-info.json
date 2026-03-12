@@ -1,0 +1,182 @@
+{
+  "compiler-version": "0.29.0",
+  "language-version": "0.21.0",
+  "runtime-version": "0.14.0",
+  "circuits": [
+    {
+      "name": "disclose_selected_cin_claims",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "disclose_given_name",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_family_name",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_birthdate",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_document_number",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_birth_place",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_address",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_gender",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "disclose_nationality",
+          "type": {
+            "type-name": "Boolean"
+          }
+        },
+        {
+          "name": "current_year",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 65535
+          }
+        },
+        {
+          "name": "current_month",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        },
+        {
+          "name": "current_day",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    }
+  ],
+  "witnesses": [
+    {
+      "name": "getGivenName",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "getFamilyName",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "getBirthYear",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 65535
+      }
+    },
+    {
+      "name": "getBirthMonth",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 255
+      }
+    },
+    {
+      "name": "getBirthDay",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 255
+      }
+    },
+    {
+      "name": "getDocumentNumber",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "getBirthPlaceHash",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "getAddressHash",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "getGender",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 255
+      }
+    },
+    {
+      "name": "getNationality",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 2
+      }
+    }
+  ],
+  "contracts": [
+  ]
+}

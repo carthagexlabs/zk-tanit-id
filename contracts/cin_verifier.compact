@@ -1,0 +1,136 @@
+// CIN Verifier Contract — zkTanitID
+// Selective disclosure: user chooses which claims to reveal (0 to all 8).
+// Each selected claim is fed as a secret witness input; the verifier sees
+// ONLY boolean attestation results — never any PII.
+//
+// Claims (matching SD-JWT VC disclosures):
+//   1. Given Name      5. Birth Place
+//   2. Family Name     6. Address
+//   3. Birthdate       7. Gender
+//   4. Document Number 8. Nationality
+//
+// Disclosure flags (public) tell the circuit which witness values to validate.
+// Witness functions provide secret data from the holder's local device.
+
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+// ─── Ledger state ────────────────────────────────────────────────────────────
+// Counter tracks total successful attestations.
+// Each verified subject increments by 1.
+
+export ledger attestation_count: Counter;
+
+// ─── Witness functions ──────────────────────────────────────────────────────
+// Declared here, implemented in TypeScript on the DApp side.
+// These provide secret claim data from the holder's local device.
+
+witness getGivenName(): Bytes<32>;
+export ledger givenName: Bytes<32>;
+
+witness getFamilyName(): Bytes<32>;
+export ledger familyName: Bytes<32>;
+
+witness getBirthYear(): Uint<16>;
+export ledger birthYear: Uint<16>;
+
+witness getBirthMonth(): Uint<8>;
+export ledger birthMonth: Uint<8>;
+
+witness getBirthDay(): Uint<8>;
+export ledger birthDay: Uint<8>;
+
+witness getDocumentNumber(): Uint<32>;
+export ledger documentNumber: Uint<32>;
+
+witness getBirthPlaceHash(): Bytes<32>;
+export ledger birthPlaceHash: Bytes<32>;
+
+witness getAddressHash(): Bytes<32>;
+export ledger addressHash: Bytes<32>;
+
+witness getGender(): Uint<8>;
+export ledger gender: Uint<8>;
+
+witness getNationality(): Bytes<2>;
+export ledger nationality: Bytes<2>;
+
+// ─── Main verification circuit ───────────────────────────────────────────────
+// User selects which claims to disclose. For each selected claim, the circuit
+// fetches secret data via witness, validates it, and records an attestation.
+
+export circuit disclose_selected_cin_claims(
+  // Disclosure flags — user selects which claims to reveal (public inputs)
+  disclose_given_name: Boolean,
+  disclose_family_name: Boolean,
+  disclose_birthdate: Boolean,
+  disclose_document_number: Boolean,
+  disclose_birth_place: Boolean,
+  disclose_address: Boolean,
+  disclose_gender: Boolean,
+  disclose_nationality: Boolean,
+  // Public verification parameters
+  current_year: Uint<16>,
+  current_month: Uint<8>,
+  current_day: Uint<8>
+): [] {
+
+  // At least one claim must be disclosed
+  assert(
+    disclose_given_name || disclose_family_name || disclose_birthdate ||
+    disclose_document_number || disclose_birth_place || disclose_address ||
+    disclose_gender || disclose_nationality,
+    "Disclosure error: at least one claim must be selected"
+  );
+
+  // ── 1. Given Name ────────────────────────────────────────────────────────
+  const given_name = disclose(getGivenName());
+
+  // ── 2. Family Name ───────────────────────────────────────────────────────
+  const family_name = disclose(getFamilyName());
+
+  // ── 3. Birthdate (age >= 18 check) ───────────────────────────────────────
+  const birth_year = disclose(getBirthYear());
+  const birth_month = disclose(getBirthMonth());
+  const birth_day = disclose(getBirthDay());
+
+  if (disclose_birthdate) {
+    const years_since_birth = current_year - birth_year;
+    const had_birthday_this_year =
+      (current_month > birth_month) ||
+      ((current_month == birth_month) && (current_day >= birth_day));
+    const age = had_birthday_this_year ? years_since_birth : (years_since_birth - 1);
+    assert(age >= 18, "Age error: holder is under 18");
+  }
+
+  // ── 4. Document Number (8-digit CIN format) ─────────────────────────────
+  const document_number = disclose(getDocumentNumber());
+
+  if (disclose_document_number) {
+    assert(document_number >= 10000000, "CIN format error: must be at least 8 digits");
+    assert(document_number <= 99999999, "CIN format error: exceeds 8 digits");
+  }
+
+  // ── 5. Birth Place ──────────────────────────────────────────────────────
+  const birth_place_hash = disclose(getBirthPlaceHash());
+
+  // ── 6. Address ──────────────────────────────────────────────────────────
+  const address_hash = disclose(getAddressHash());
+
+  // ── 7. Gender ───────────────────────────────────────────────────────────
+  const gender = disclose(getGender());
+
+  if (disclose_gender) {
+    assert(gender >= 1, "Gender error: invalid gender code");
+    assert(gender <= 3, "Gender error: invalid gender code");
+  }
+
+  // ── 8. Nationality ─────────────────────────────────────────────────────
+  const nationality = disclose(getNationality());
+
+  // ── Record attestation ─────────────────────────────────────────────────
+  attestation_count.increment(1);
+}
+
+
